@@ -1,7 +1,14 @@
+import 'package:date_picker_timeline/date_picker_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:luckywheel/base/base_image.dart';
+import 'package:luckywheel/base/loading.dart';
+import 'package:luckywheel/helper/validate.dart';
 import 'package:luckywheel/screen/nasa/nasa_controller.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class NasaPage extends GetView<NasaController> {
   const NasaPage({super.key});
@@ -12,28 +19,29 @@ class NasaPage extends GetView<NasaController> {
       init: NasaController(),
       builder: (NasaController controller) {
         return Scaffold(
-          appBar: AppBar(
-            backgroundColor: Color(0xff1a1a1a),
-            elevation: 0,
-            leading: IconButton(icon: Icon(Icons.arrow_back),onPressed: () {
-              Get.back();
-            },
-            tooltip: 'Back',
-            ), 
-            
-          ),
+          // appBar: _appBar(),
           backgroundColor: Color(0xff1a1a1a),
-          body: Container(
-            padding: EdgeInsets.symmetric(vertical: 15),
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    colors: [Colors.black12, Colors.blue.withOpacity(0.5)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight)),
-            child: Center(
-              child: controller.isLoading == false
-                  ? const CircularProgressIndicator()
-                  : _hinhAnhThienVan(controller),
+          body: GestureDetector(
+            onHorizontalDragEnd: (details) {
+              if (details.velocity.pixelsPerSecond.dx > 1000) {
+                Get.back();
+              } else if (details.velocity.pixelsPerSecond.dx < -1000) {
+                Get.back();
+              }
+            },
+            child: SafeArea(
+              child: Container(
+                height: Get.height,
+                padding: EdgeInsets.symmetric(vertical: 15),
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        colors: [Colors.black12, Colors.blue.withOpacity(0.5)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight)),
+                child: controller.isLoading == false
+                    ? LoadingIndicator()
+                    : _hinhAnhThienVan(controller),
+              ),
             ),
           ),
         );
@@ -42,23 +50,40 @@ class NasaPage extends GetView<NasaController> {
   }
 
   ///
+  /// appBar
+  ///
+  AppBar _appBar() {
+    return AppBar(
+      backgroundColor: Color(0xff1a1a1a),
+      elevation: 0,
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back),
+        onPressed: () {
+          Get.back();
+        },
+        tooltip: 'Back',
+      ),
+    );
+  }
+
+  ///
   /// hinh anh thien van
   ///
   Widget _hinhAnhThienVan(NasaController controller) {
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-             controller.nasaResponse.date!,
-            style: GoogleFonts.nunito(
-              fontSize: 16,
-              color: Colors.white,
-            ),
+    return RefreshIndicator(
+      backgroundColor: Colors.black38,
+      color: Colors.white,
+      onRefresh: () async {},
+      child: SingleChildScrollView(
+        child: Column(children: [
+          _dateTime(controller),
+          SizedBox(
+            height: 10,
           ),
           Text(controller.nasaResponse.title!,
+              textAlign: TextAlign.center,
               style: GoogleFonts.nunito(
-                fontSize: 16,
+                fontSize: 20,
                 color: Colors.white,
               )),
           SizedBox(
@@ -66,9 +91,7 @@ class NasaPage extends GetView<NasaController> {
           ),
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
-            child: Image.network(
-              controller.nasaResponse.url!,
-            ),
+            child: PhuongImage(url: controller.nasaResponse.url!)
           ),
           SizedBox(
             height: 10,
@@ -83,8 +106,37 @@ class NasaPage extends GetView<NasaController> {
               ),
             ),
           ),
-        ],
+        ]),
       ),
     );
   }
+}
+
+///
+/// custom dateTime
+///
+Widget _dateTime(NasaController controller) {
+  DateTime currentDate = DateTime.now();
+  List<DateTime> validDates = [];
+  int numOfDaysToShow = 10; // Số ngày muốn hiển thị
+
+  // Thêm ngày hiện tại và các ngày quá khứ vào danh sách validDates
+  for (int i = numOfDaysToShow - 1; i >= 0; i--) {
+    DateTime date = currentDate.subtract(Duration(days: i));
+    validDates.add(date);
+  }
+
+  return DatePicker(
+    validDates.first,
+    initialSelectedDate: currentDate,
+    // selectionColor: const Color.fromRGBO(16, 32, 56, 1),
+    selectedTextColor: Colors.white,
+    locale: 'vi_VN',
+    daysCount: validDates.length,
+    dateTextStyle:
+        GoogleFonts.nunito(fontSize: 20, fontWeight: FontWeight.w600),
+    onDateChange: (selectedDate) {
+      controller.clickDatetime(selectedDate);
+    },
+  );
 }

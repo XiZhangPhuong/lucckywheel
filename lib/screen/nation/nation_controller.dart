@@ -11,13 +11,14 @@ class NationController extends GetxController {
   NationRespository _nationRespotory = NationRespository();
   ScrollController? scrollController;
   RxBool showFloatingButton = false.obs;
+  late TextEditingController txtsearch = TextEditingController();
   @override
   void onInit() {
     super.onInit();
     scrollController = ScrollController();
     scrollController!.addListener(_onScroll);
     getNation();
-   // scrollToBottom();
+    // scrollToBottom();
   }
 
   @override
@@ -55,9 +56,9 @@ class NationController extends GetxController {
   /// scroll to bottom
   ///
   void scrollToBottom() {
-    if(scrollController!=null){
+    if (scrollController != null) {
       scrollController!.animateTo(scrollController!.position.maxScrollExtent,
-        duration: Duration(milliseconds: 500), curve: Curves.easeInOut);
+          duration: Duration(milliseconds: 500), curve: Curves.easeInOut);
     }
   }
 
@@ -74,6 +75,7 @@ class NationController extends GetxController {
           },
         );
         isLoading = true;
+        print(listNation.length.toString());
         update();
       },
       onError: (e) {
@@ -131,6 +133,7 @@ class NationController extends GetxController {
               end: Alignment.bottomRight),
         ),
         child: SingleChildScrollView(
+          physics: const NeverScrollableScrollPhysics(),
             child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -162,7 +165,7 @@ class NationController extends GetxController {
             Validate.nullOrEmpty(nationResponse.name!.official)
                 ? Container()
                 : Text(
-                    'Official: ' + nationResponse.name!.official!,
+                    'txt_chinhthuc'.tr + nationResponse.name!.official!,
                     textAlign: TextAlign.left,
                     style: GoogleFonts.nunito(
                       fontSize: 16,
@@ -175,9 +178,9 @@ class NationController extends GetxController {
             Validate.nullOrEmpty(nationResponse.population)
                 ? Container()
                 : Text(
-                    'Polulation: ' +
+                    'txt_danso'.tr +
                         formatNumber(nationResponse.population!) +
-                        ' people',
+                        'txt_nguoi'.tr,
                     textAlign: TextAlign.left,
                     style: GoogleFonts.nunito(
                       fontSize: 16,
@@ -192,7 +195,7 @@ class NationController extends GetxController {
                 : Text(
                     nationResponse.region!.isEmpty
                         ? '...'
-                        : 'Region: ' + nationResponse.region!,
+                        : 'txt_khuvuc'.tr + nationResponse.region!,
                     textAlign: TextAlign.left,
                     style: GoogleFonts.nunito(
                       fontSize: 16,
@@ -207,7 +210,7 @@ class NationController extends GetxController {
                 : Text(
                     nationResponse.subregion!.isEmpty
                         ? '...'
-                        : 'Subregion: ' + nationResponse.subregion!,
+                        : 'txt_tieukhuvuc'.tr + nationResponse.subregion!,
                     textAlign: TextAlign.left,
                     style: GoogleFonts.nunito(
                       fontSize: 16,
@@ -223,7 +226,7 @@ class NationController extends GetxController {
                     nationResponse.capital!.isEmpty ||
                             nationResponse.capital == null
                         ? '...'
-                        : 'Capital: ' + nationResponse.capital!.join(','),
+                        : 'txt_thudo'.tr + nationResponse.capital!.join(','),
                     textAlign: TextAlign.left,
                     style: GoogleFonts.nunito(
                       fontSize: 16,
@@ -238,7 +241,7 @@ class NationController extends GetxController {
                 : Text(
                     nationResponse.fifa!.isEmpty
                         ? '...'
-                        : 'Fifa: ' + nationResponse.fifa!,
+                        : 'txt_mavung'.tr + nationResponse.fifa!,
                     textAlign: TextAlign.left,
                     style: GoogleFonts.nunito(
                       fontSize: 16,
@@ -253,7 +256,7 @@ class NationController extends GetxController {
                 : Text(
                     nationResponse.timezones!.isEmpty
                         ? '...'
-                        : 'Timezones: ' + nationResponse.timezones!.join(','),
+                        : 'txt_muigio'.tr + nationResponse.timezones!.join(','),
                     textAlign: TextAlign.left,
                     style: GoogleFonts.nunito(
                       fontSize: 16,
@@ -268,7 +271,7 @@ class NationController extends GetxController {
                 : Text(
                     nationResponse.borders!.isEmpty
                         ? '...'
-                        : 'Borders: ' + nationResponse.borders!.join(','),
+                        : 'txt_biengioi'.tr + nationResponse.borders!.join(','),
                     textAlign: TextAlign.left,
                     style: GoogleFonts.nunito(
                       fontSize: 16,
@@ -322,4 +325,39 @@ class NationController extends GetxController {
       ),
     );
   }
+
+///
+/// show dialog search
+///
+void showTopSheet(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(16.0),
+        topRight: Radius.circular(16.0),
+      ),
+    ),
+    builder: (context) {
+      return Container(
+        padding: EdgeInsets.only(
+          top: AppBar().preferredSize.height,
+          left: 16.0,
+          right: 16.0,
+          bottom: 16.0,
+        ),
+        child: Column(
+          children: [
+            // Nội dung của Dialog search
+            // ...
+          ],
+        ),
+      );
+    },
+  );
 }
+
+
+}
+
