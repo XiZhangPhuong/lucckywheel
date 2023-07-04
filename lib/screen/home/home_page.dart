@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:luckywheel/routes/routes_path/home_routes.dart';
 import 'package:luckywheel/screen/home/home_controller.dart';
-import 'package:page_transition/page_transition.dart';
+
 class HomePage extends GetView<HomeController> {
   const HomePage({super.key});
 
@@ -78,6 +78,59 @@ class HomePage extends GetView<HomeController> {
                       ),
                     ),
                   ),
+
+                  // techport
+                  SizedBox(
+                    height: 10,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Get.toNamed(HomeRoutes.TECHPORT);
+                    },
+                    child: Container(
+                      height: maxHight / 15,
+                      margin: EdgeInsets.symmetric(horizontal: maxWidght / 15),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(width: 1, color: Colors.black)),
+                      child: Center(
+                        child: Text(
+                          'txt_congcongnghe'.tr.tr,
+                          style: GoogleFonts.nunito(
+                            color: Colors.white,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // techTranfer
+                  SizedBox(
+                    height: 10,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Get.toNamed(HomeRoutes.TECHTRANFER);
+                    },
+                    child: Container(
+                      height: maxHight / 15,
+                      margin: EdgeInsets.symmetric(horizontal: maxWidght / 15),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(width: 1, color: Colors.black)),
+                      child: Center(
+                        child: Text(
+                          'txt_bangsangche'.tr,
+                          style: GoogleFonts.nunito(
+                            color: Colors.white,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
                   // language
                   SizedBox(
                     height: 10,
@@ -103,6 +156,7 @@ class HomePage extends GetView<HomeController> {
                       ),
                     ),
                   ),
+
                 ],
               ),
             ),
@@ -151,7 +205,7 @@ class HomePage extends GetView<HomeController> {
             ),
             Expanded(
               child: GridView.builder(
-                physics: const NeverScrollableScrollPhysics(),
+              //  physics: const NeverScrollableScrollPhysics(),
                 itemCount:
                     controller.dataList.length, // Số lượng item trong grid
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

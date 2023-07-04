@@ -20,7 +20,7 @@ class NasaController extends GetxController {
   ///
   /// void get nasa response
   ///
-  Future<void> getNasaResponse() async {
+  Future<void> getNasaResponse()  async {
     nasaRepository.getNasaResponse(
       onSucess: (data) {
         nasaResponse = data;

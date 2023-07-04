@@ -43,6 +43,21 @@ class HomeController extends GetxController {
     },
    
   ];
+
+  List<Map<String,dynamic>> listMenu = [
+    {
+      'image':'https://apod.nasa.gov/apod/image/2307/DracoTrio_TeamOmicron1024.jpg',
+      'title' : 'Apod'
+    },
+     {
+      'image':'https://static.vecteezy.com/system/resources/previews/005/869/422/non_2x/human-overpopulation-chalk-rgb-color-concept-icon-birth-rate-increase-international-population-ecological-footprint-society-idea-isolated-chalkboard-illustration-on-black-background-free-vector.jpg',
+      'title' : 'Polulation'
+    },
+    {
+      'image' : '',
+      'title':'Language',
+    }
+  ];
    int selectTed = 0;
   @override
   void onInit() {

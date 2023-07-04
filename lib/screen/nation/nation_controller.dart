@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -15,7 +17,6 @@ class NationController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    scrollController = ScrollController();
     scrollController!.addListener(_onScroll);
     getNation();
     // scrollToBottom();
@@ -52,15 +53,7 @@ class NationController extends GetxController {
     }
   }
 
-  ///
-  /// scroll to bottom
-  ///
-  void scrollToBottom() {
-    if (scrollController != null) {
-      scrollController!.animateTo(scrollController!.position.maxScrollExtent,
-          duration: Duration(milliseconds: 500), curve: Curves.easeInOut);
-    }
-  }
+ 
 
   ///
   ///

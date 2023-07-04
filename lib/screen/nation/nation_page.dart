@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:luckywheel/base/loading.dart';
 import 'package:luckywheel/screen/nation/nation_controller.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 class NationPage extends GetView<NationController> {
   const NationPage({super.key});
@@ -50,7 +51,7 @@ class NationPage extends GetView<NationController> {
                       IconButton(
                           icon: Icon(Icons.search),
                           onPressed: () {
-                           // controller.showTopSheet(context);
+                            // controller.showTopSheet(context);
                           }),
                     ],
                   ),
@@ -77,49 +78,65 @@ class NationPage extends GetView<NationController> {
                               height: 10,
                             ),
                             Expanded(
-                              child: ListView.builder(
-                                controller: controller.scrollController,
-                                shrinkWrap: true,
-                                itemCount: controller.listNation.length,
-                                itemBuilder: (context, index) {
-                                  final item = controller.listNation[index];
-                                  return ListTile(
-                                    onTap: () {
-                                      controller.showBottom(
-                                          nationResponse: item);
-                                    },
-                                    trailing: Text(
-                                      index < 3 ? (index + 1).toString() : '',
-                                      style: GoogleFonts.nunito(
-                                        fontSize: 16,
-                                        color: Colors.white,
+                              child: AnimationLimiter(
+                                child: ListView.builder(
+                                  controller: controller.scrollController,
+                                  shrinkWrap: true,
+                                  itemCount: controller.listNation.length,
+                                  itemBuilder: (context, index) {
+                                    final item = controller.listNation[index];
+                                    return AnimationConfiguration.staggeredList(
+                                      position: index,
+                                      duration:
+                                          const Duration(milliseconds: 375),
+                                      child: SlideAnimation(
+                                        verticalOffset: 50.0,
+                                        child: FadeInAnimation(
+                                          child: ListTile(
+                                            onTap: () {
+                                              controller.showBottom(
+                                                  nationResponse: item);
+                                            },
+                                            trailing: Text(
+                                              index < 3
+                                                  ? (index + 1).toString()
+                                                  : '',
+                                              style: GoogleFonts.nunito(
+                                                fontSize: 16,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            leading: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(7.0),
+                                              child: Image.network(
+                                                item.flags!.png!,
+                                                width: 70,
+                                                height: 50,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                            title: Text(
+                                              item.name!.common!,
+                                              style: GoogleFonts.nunito(
+                                                fontSize: 16,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            subtitle: Text(
+                                              controller.formatNumber(
+                                                  item.population!),
+                                              style: GoogleFonts.nunito(
+                                                fontSize: 16,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                    leading: ClipRRect(
-                                      borderRadius: BorderRadius.circular(7.0),
-                                      child: Image.network(
-                                        item.flags!.png!,
-                                        width: 70,
-                                        height: 50,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                    title: Text(
-                                      item.name!.common!,
-                                      style: GoogleFonts.nunito(
-                                        fontSize: 16,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    subtitle: Text(
-                                      controller.formatNumber(item.population!),
-                                      style: GoogleFonts.nunito(
-                                        fontSize: 16,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  );
-                                },
+                                    );
+                                  },
+                                ),
                               ),
                             ),
                           ],
@@ -134,7 +151,7 @@ class NationPage extends GetView<NationController> {
   ///
   /// floatingButon
   ///
-  AnimatedOpacity _floatTingButton(NationController controller) {
+  Widget _floatTingButton(NationController controller) {
     return AnimatedOpacity(
       opacity: controller.showFloatingButton.value ? 1.0 : 0.0,
       duration: Duration(microseconds: 300),
@@ -172,13 +189,10 @@ class NationPage extends GetView<NationController> {
             ),
             labelStyle: GoogleFonts.nunito(fontSize: 16, color: Colors.white),
             focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                  color: Colors.grey[800]!), 
+              borderSide: BorderSide(color: Colors.grey[800]!),
             ),
             enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                  color: Colors
-                      .grey[800]!), 
+              borderSide: BorderSide(color: Colors.grey[800]!),
             ),
             hintText: 'Enter text',
             hintStyle: TextStyle(color: Colors.grey[800]!),

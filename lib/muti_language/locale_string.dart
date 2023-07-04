@@ -21,6 +21,13 @@ class LocaleString extends Translations {
           'txt_thongtinquocgia': 'Thông tin quốc gia',
           'txt_ngonngu': 'Ngôn ngữ',
           'txt_chonngonngu': 'Chọn ngôn ngữ',
+          ///
+          'txt_congcongnghe' : 'Cổng công nghệ',
+          'txt_bangsangche' : 'Bằng sáng chế',
+          'txt_thoigian':'Thời gian : ',
+          'txt_nhungloiich':'Những lợi ích : ',
+          'txt_mieuta':'Miêu tả',
+          '':'',
         },
 
         // england
