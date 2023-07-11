@@ -27,7 +27,10 @@ class LocaleString extends Translations {
           'txt_thoigian':'Thời gian : ',
           'txt_nhungloiich':'Những lợi ích : ',
           'txt_mieuta':'Miêu tả',
-          '':'',
+          'txt_docbao':'Đọc báo',
+          'txt_lichthidau':'Lịch thi đấu',
+          'txt_bangxephang':'Bảng xếp hạng',
+          'txt_caulacbo':'Câu lạc bộ'
         },
 
         // england

@@ -118,7 +118,7 @@ class TecchTransFerPage extends GetView<techTransFerController> {
                                                     .withOpacity(0.4)),
                                             child: Center(
                                               child: Text(
-                                                '${index+1}/${controller.techTransFerResponse.total}',
+                                                '${index + 1}/${controller.techTransFerResponse.total}',
                                                 style: GoogleFonts.nunito(
                                                   fontSize: 14,
                                                   color: Colors.white70,
@@ -173,6 +173,7 @@ class TecchTransFerPage extends GetView<techTransFerController> {
                                                 color: Colors.white,
                                               ),
                                             ),
+                                          
                                           ],
                                         ),
                                       ),

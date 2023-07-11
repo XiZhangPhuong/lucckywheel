@@ -51,6 +51,10 @@ dependencies:
   shared_preferences: ^2.2.0
   flutter_staggered_animations: ^1.1.1
   flutter_tts: ^3.7.0
+  intl: ^0.17.0
+  data_table_2: ^2.4.2
+  xml2json: ^5.3.6
+  slugify: ^2.0.0
 
 dev_dependencies:
   flutter_test:

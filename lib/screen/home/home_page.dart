@@ -131,6 +131,60 @@ class HomePage extends GetView<HomeController> {
                     ),
                   ),
 
+                  // newspaper
+                   // techTranfer
+                  SizedBox(
+                    height: 10,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Get.toNamed(HomeRoutes.NEWSPAPER);
+                    },
+                    child: Container(
+                      height: maxHight / 15,
+                      margin: EdgeInsets.symmetric(horizontal: maxWidght / 15),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(width: 1, color: Colors.black)),
+                      child: Center(
+                        child: Text(
+                          'txt_docbao'.tr,
+                          style: GoogleFonts.nunito(
+                            color: Colors.white,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // food FootBallBinding
+                   // techTranfer
+                  SizedBox(
+                    height: 10,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Get.toNamed(HomeRoutes.COMPETITION);
+                    },
+                    child: Container(
+                      height: maxHight / 15,
+                      margin: EdgeInsets.symmetric(horizontal: maxWidght / 15),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(width: 1, color: Colors.black)),
+                      child: Center(
+                        child: Text(
+                          'Bóng đá'.tr,
+                          style: GoogleFonts.nunito(
+                            color: Colors.white,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
                   // language
                   SizedBox(
                     height: 10,

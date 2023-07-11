@@ -17,6 +17,7 @@ class NationController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    scrollController = ScrollController();
     scrollController!.addListener(_onScroll);
     getNation();
     // scrollToBottom();

@@ -1,3 +1,5 @@
+import 'package:flutter_tts/flutter_tts.dart';
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:luckywheel/model/nasa_response.dart';
 import 'package:luckywheel/repository/nasa_repository.dart';
@@ -9,12 +11,22 @@ class NasaController extends GetxController {
   List<String> listNation = [];
   bool isLoading = false;
   DateTime? selectedDate;
+  RxBool isSpeak = false.obs;
+  final FlutterTts flutterTts = FlutterTts();
+ 
 
   @override
   void onInit() {
     super.onInit();
     getNasaResponse();
-    // getAllNameTion();
+    
+  }
+
+   @override
+  void onClose() {
+    super.onClose();
+    flutterTts.stop();
+    
   }
 
   ///
@@ -74,6 +86,36 @@ class NasaController extends GetxController {
   }
 
   ///
+  /// click speak
+  ///
+
+  Future<void> speakText({required String text}) async {
+    print("Bắt đầu phát âm thanh: $text");
+    await flutterTts.setLanguage('en-ES'); // Đặt ngôn ngữ là tiếng Anh
+    await flutterTts.setSpeechRate(
+        0.5); // Đặt tốc độ phát giọng (1.0 là tốc độ bình thường)
+    await flutterTts.setVolume(0.5);
+    await flutterTts.speak(text); // Phát giọng cho đoạn văn bản
+    print("Kết thúc phát âm thanh:$text");
+  }
+
+
+   ///
+  /// click button player
+  ///
+  Future<void> clickButtonVolume({required String text}) async {
+    if (isSpeak.value) {
+      isSpeak.value = false;
+      flutterTts.stop();
+      update();
+    } else {
+      isSpeak.value = true;
+      speakText(text: text);
+      update();
+    }
+  }
+
+  ///
   /// click date time
   ///
   void clickDatetime(DateTime dateTime) {
@@ -87,6 +129,8 @@ class NasaController extends GetxController {
   }
 }
 
+
+
 ///
 /// dat time to String (yyyy/MM/dd)
 ///
@@ -94,3 +138,6 @@ String convertDateToString(DateTime time) {
   String formattedDate = DateFormat('yyyy-MM-dd').format(time);
   return formattedDate;
 }
+
+
+

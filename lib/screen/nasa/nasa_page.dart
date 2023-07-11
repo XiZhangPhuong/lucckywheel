@@ -93,8 +93,15 @@ class NasaPage extends GetView<NasaController> {
             borderRadius: BorderRadius.circular(10),
             child: PhuongImage(url: controller.nasaResponse.url!)
           ),
-          SizedBox(
-            height: 10,
+         // button volume
+          AnimatedContainer(
+            duration: Duration(seconds: 500),
+            child: Container(
+              alignment: Alignment.centerRight,
+              child: IconButton(onPressed: () {
+                controller.clickButtonVolume(text: controller.nasaResponse.explanation!);
+              }, icon: Icon(Icons.volume_up,color: Colors.white,),),
+            ),
           ),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 10),

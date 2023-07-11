@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:luckywheel/model/techtransfer_response.dart';
 import 'package:luckywheel/repository/techtranfer_respository.dart';
 
@@ -59,7 +58,7 @@ class techTransFerController extends GetxController {
 
   Future<void> speakText({required String text}) async {
     print("Bắt đầu phát âm thanh: $text");
-    await flutterTts.setLanguage('vi-VN'); // Đặt ngôn ngữ là tiếng Anh
+    await flutterTts.setLanguage('en-ES'); // Đặt ngôn ngữ là tiếng Anh
     await flutterTts.setSpeechRate(
         0.5); // Đặt tốc độ phát giọng (1.0 là tốc độ bình thường)
     await flutterTts.setVolume(0.5);
