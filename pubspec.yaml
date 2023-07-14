@@ -55,6 +55,7 @@ dependencies:
   data_table_2: ^2.4.2
   xml2json: ^5.3.6
   slugify: ^2.0.0
+  html: ^0.15.4
 
 dev_dependencies:
   flutter_test:

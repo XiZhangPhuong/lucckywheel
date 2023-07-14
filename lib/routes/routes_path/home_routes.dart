@@ -4,9 +4,13 @@ import 'package:luckywheel/screen/cat/cat_binding.dart';
 import 'package:luckywheel/screen/cat/cat_page.dart';
 import 'package:luckywheel/screen/competitions/competitions_binding.dart';
 import 'package:luckywheel/screen/competitions/competitions_page.dart';
+import 'package:luckywheel/screen/dashboard/dashboard_binding.dart';
+import 'package:luckywheel/screen/dashboard/dashboard_page.dart';
 import 'package:luckywheel/screen/football/football_binding.dart';
 import 'package:luckywheel/screen/football/football_page.dart';
 import 'package:luckywheel/screen/home/home_binding.dart';
+import 'package:luckywheel/screen/home/videos/videos_binding.dart';
+import 'package:luckywheel/screen/home/videos/videos_page.dart';
 import 'package:luckywheel/screen/nasa/nasa_binding.dart';
 import 'package:luckywheel/screen/nasa/nasa_page.dart';
 import 'package:luckywheel/screen/nation/nation_binding.dart';
@@ -28,10 +32,12 @@ class HomeRoutes {
   static const String NASA = '/nasa';
   static const String NATION = '/nation';
   static const String TECHPORT = '/techport';
-   static const String TECHTRANFER = '/techtranfer';
+  static const String TECHTRANFER = '/techtranfer';
   static const String NEWSPAPER = '/newspaper';
   static const String FOOTBALL = '/football';
   static const String COMPETITION = '/competition';
+  static const String DASHBOARD = '/dashboard';
+  static const String VIDEOS = '/videos';
   static List<GetPage> list = [
     GetPage(
       name: HOME,
@@ -62,27 +68,27 @@ class HomeRoutes {
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 500),
     ),
-     GetPage(
+    GetPage(
       name: TECHPORT,
       page: () => const TechPortPage(),
       binding: NationBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 500),
     ),
-     GetPage(
+    GetPage(
       name: TECHTRANFER,
       page: () => const TecchTransFerPage(),
       binding: techTransFerBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 500),
     ),
-     GetPage(
+    GetPage(
       name: TECHTRANFER,
       page: () => const TecchTransFerPage(),
       binding: techTransFerBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 500),
-    ), 
+    ),
     GetPage(
       name: NEWSPAPER,
       page: () => const NewSpaperPage(),
@@ -90,17 +96,29 @@ class HomeRoutes {
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 500),
     ),
-     GetPage(
+    GetPage(
       name: FOOTBALL,
       page: () => const FootBallPage(),
       binding: FootBallBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 500),
     ),
-     GetPage(
+    GetPage(
       name: COMPETITION,
       page: () => const CompetitionPage(),
       binding: CompetitionBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 500),
+    ),
+    GetPage(
+      name: DASHBOARD,
+      page: () => const DashBoardPage(),
+      binding: DashBoardBinding(),
+    ),
+    GetPage(
+      name: VIDEOS,
+      page: () => const VideosPage(),
+      binding: VideosBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 500),
     ),

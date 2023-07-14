@@ -3,6 +3,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:luckywheel/base/loading.dart';
 import 'package:xml2json/xml2json.dart';
+import 'package:html/parser.dart' show parse;
+import 'package:html/dom.dart';
 class Temp {
   static const String APIKEY = 'AdxWlOA2vYhQgmLcgEL0Ob19F6FhdDEoOriYcvAM';
   static const String TOKEN_FOOTBALL = '7a8a48dd83a74abd98e5e0a27f2914f8';
@@ -60,6 +62,19 @@ static Widget processImage1({ required  imageUrl,double? height,double? widght,W
       ),
     );
   }
+}
+
+static String extractHttpsUrlFromHtml(String html) {
+  Document document = parse(html);
+  var elements = document.getElementsByTagName('iframe');
+  if (elements.isNotEmpty) {
+    var iframeElement = elements.first;
+    String src = iframeElement.attributes['src'] ?? '';
+    if (src.startsWith('https')) {
+      return src;
+    }
+  }
+  return '';
 }
 
 }
