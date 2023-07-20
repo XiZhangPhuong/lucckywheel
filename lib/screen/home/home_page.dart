@@ -41,6 +41,7 @@ class HomePage extends GetView<HomeController> {
             // appBar
             _appBar(controller),
             _matchHightLight(controller),
+            _cacGiaiDauLon(controller),
             // Expanded(
             //   child: ListView.builder(
             //     shrinkWrap: true,
@@ -83,7 +84,7 @@ class HomePage extends GetView<HomeController> {
         Text(
           'Match Highlight',
           style: GoogleFonts.nunito(
-              color: Colors.white, fontSize: 20, fontWeight: FontWeight.w600),
+              color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
         ),
         SizedBox(
           height: 5,
@@ -98,7 +99,6 @@ class HomePage extends GetView<HomeController> {
               final item = controller.videoResponse.response![index];
               return GestureDetector(
                 onTap: () {
-                  print(item.videos![0].embed!);
                   controller.gotoVideo(item.videos![0].embed!.toString());
                 },
                 child: Container(
@@ -457,4 +457,49 @@ class HomePage extends GetView<HomeController> {
           }),
     );
   }
+}
+
+
+///
+/// các giải đấu lớn
+///
+Widget _cacGiaiDauLon(HomeController homeController){
+  return Container(
+     child: Column(
+      children: [
+        Text('Các giải đấu',style: GoogleFonts.nunito(
+          color: Colors.white,
+          fontSize: 16,
+        ),),
+        SizedBox(height: 5,),
+        Container(
+          height: 200,
+          child: ListView.builder(
+            shrinkWrap: true,
+            scrollDirection: Axis.horizontal,
+            itemCount: homeController.listGiaiDau.length,
+            itemBuilder: (context, index) {
+              final item = homeController.listGiaiDau[index];
+              return GestureDetector(
+                onTap: () {
+                  
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 1,color: Colors.white),
+                  ),
+                  child: Center(
+                    child: Text(item.name!,style: GoogleFonts.nunito(
+                      color: Colors.red,
+                      fontSize: 14,
+                    ),),
+                  ),
+                ),
+              );
+            },
+          ),
+        )
+      ],
+     ),
+  );
 }

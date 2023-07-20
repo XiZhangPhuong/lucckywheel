@@ -23,4 +23,23 @@ class VideoRepository {
       onError(e);
     }
   }
+
+  ///
+  /// get all Bank
+  ///
+  Future<void> getAllBank() async {
+    final response = await dio.get('https://api.vietqr.io/v2/banks');
+    if(response.statusCode==200){
+      final resuilt = response.data['data'][0] as dynamic;
+      print(resuilt);
+    }
+  }
+
+ ///
+ ///
+ ///'=
+ ///
+   
 }
+
+

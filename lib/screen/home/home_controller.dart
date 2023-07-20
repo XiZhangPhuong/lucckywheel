@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:luckywheel/model/football/cacgiaidau_response.dart';
 import 'package:luckywheel/model/football/video_response.dart';
+import 'package:luckywheel/repository/footballl_repository.dart';
 import 'package:luckywheel/repository/video_repository.dart';
 import 'package:luckywheel/routes/routes_path/home_routes.dart';
 import 'package:luckywheel/shares/shared_preference_helper.dart';
@@ -10,6 +12,9 @@ class HomeController extends GetxController {
   List<dynamic> listVideo = [];
   VideoResponse videoResponse = VideoResponse();
   bool isLoading = false;
+  final FoodBallRespository _foodBallRespository = FoodBallRespository();
+  bool isLoadingGiaiDau = false;
+  List<CacGiaiDauResponse> listGiaiDau = [];
   List<Map<String, dynamic>> dataList = [
     {
       'url': 'https://flagcdn.com/w320/vn.png',
@@ -70,6 +75,7 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     getVideo();
+    getAllCompetition();
   }
 
   ///
@@ -147,4 +153,23 @@ class HomeController extends GetxController {
   void gotoVideo(String html){
     Get.toNamed(HomeRoutes.VIDEOS,arguments: html);
   }
+
+ ///
+  /// get giải đấu lớn trên thế giới
+  ///
+  Future<void> getAllCompetition() async {
+   await _foodBallRespository.getCompetition(
+    onSuccess: (data) {
+      listGiaiDau = data;
+      print(listGiaiDau.length.toString());
+      
+      isLoadingGiaiDau = true;
+      update();
+    },
+    onError: (e) {
+      print(e);
+    },
+   );
+ 
+}
 }
