@@ -127,7 +127,7 @@ class FootBallPage extends GetView<FootBallController> {
                         height: 5.0,
                       ),
                       Text(
-                        item.competition!.name!,
+                        '',
                         style: GoogleFonts.nunito(
                           fontSize: 14,
                           color: Colors.white,

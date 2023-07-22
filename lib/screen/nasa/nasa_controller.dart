@@ -56,7 +56,6 @@ class NasaController extends GetxController {
       onSucess: (data) {
         nasaResponse = data;
         isLoading = true;
-        print(data.toMap());
         update();
       },
       onError: (e) {
@@ -74,10 +73,6 @@ class NasaController extends GetxController {
       onSucess: (data) {
         listNation = data;
         update();
-        print(listNation.length.toString());
-        for (var i in listNation) {
-          print(i);
-        }
       },
       onError: (e) {
         print(e);

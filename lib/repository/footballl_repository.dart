@@ -16,13 +16,14 @@ class FoodBallRespository {
   /// Gọi tất cả các trận đấu sắp diễn ra ở Ngoại Hạng Anh
   ///
   Future<void> getAllScheDuledPL({
-    required String code,
+     String? code,
+     String? season,
     required Function(CompetitionsResponse data) onSuccess,
     required Function(dynamic e) onError,
   }) async {
     try {
       final response = await dio.get(
-          'https://api.football-data.org/v4/competitions/${code}/matches?status=SCHEDULED',
+          'https://api.football-data.org/v4/competitions/${code}/matches',
           options: options);
       if (response.statusCode == 200) {
         dynamic resuilt = response.data;
@@ -37,7 +38,7 @@ class FoodBallRespository {
   /// Thống kê bảng xếp hạng mùa giải 2023-2024 Ngoại Hạng Anh
   ///
   Future<void> getStanding({
-    int? season,
+    String? season,
     String? code,
     required Function(StadingResponse data) onSuccess,
     required Function(dynamic e) onError,

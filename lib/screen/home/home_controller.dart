@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:luckywheel/base/loading.dart';
 import 'package:luckywheel/model/football/cacgiaidau_response.dart';
+import 'package:luckywheel/model/football/competitions_response.dart';
+import 'package:luckywheel/model/football/stading_response.dart';
 import 'package:luckywheel/model/football/video_response.dart';
 import 'package:luckywheel/repository/footballl_repository.dart';
 import 'package:luckywheel/repository/video_repository.dart';
@@ -10,11 +15,22 @@ import 'package:luckywheel/shares/shared_preference_helper.dart';
 class HomeController extends GetxController {
   final VideoRepository _videoRepository = VideoRepository();
   List<dynamic> listVideo = [];
+  CompetitionsResponse compertitionResponse = CompetitionsResponse();
   VideoResponse videoResponse = VideoResponse();
   bool isLoading = false;
   final FoodBallRespository _foodBallRespository = FoodBallRespository();
   bool isLoadingGiaiDau = false;
+  bool clickTabbar = true;
+  bool isLoadingScheDule = false;
+  bool isLoadingStanding = false;
+  StadingResponse stadingResponse = StadingResponse();
   List<CacGiaiDauResponse> listGiaiDau = [];
+  List<String> listVongDau = [];
+  String valueVongDau = '';
+  int currentYear = 0;
+  int matchday = 1;
+  // list năm các mùa giải Ngoại Hạng Anh 2020 - 2023
+  List<int> listYear = [];
   List<Map<String, dynamic>> dataList = [
     {
       'url': 'https://flagcdn.com/w320/vn.png',
@@ -74,8 +90,80 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    getVideo();
-    getAllCompetition();
+    //  getVideo();
+    // getAllCompetition();
+    initListYear();
+    getAll();
+    getStanDing();
+  }
+
+  ///
+  /// init list year
+  ///
+  void initListYear() {
+    currentYear = DateTime.now().year;
+    listYear.add(currentYear);
+    for(int i =1;i<=3;i++){
+      listYear.add(currentYear -i);
+    }
+  }
+
+  ///
+  /// clickSearchYear
+  ///
+  void clickSearchYearch(int value){
+     currentYear = value;
+     getAll();
+     update();
+  }
+  ///
+  /// click tabbar
+  ///
+  void changeTabbar({required bool isTab}) {
+    clickTabbar = isTab;
+    update();
+  }
+
+  ///
+  /// init vong ddau
+  ///
+  void initVongDau() {
+    listVongDau.add('Chọn vòng đấu');
+    for (int i = 1; i <= 38; i++) {
+      listVongDau.add('Vòng ${i}');
+    }
+    valueVongDau = listVongDau.first;
+  }
+
+  ///
+  /// chage Dropdowbutotn
+  ///
+  void clickDropDowButton(String value) {
+    valueVongDau = value;
+    // for(final i in listVongDau){
+    //   if(i==value){
+    //     print(i);
+    //     break;
+    //   }
+    // }
+    update();
+  }
+
+  ///
+  /// Gọi tất cả các trận đấu sắp diễn ra ở Ngoại Hạng Anh
+  ///
+  Future<void> getAll() async {
+    await _foodBallRespository.getAllScheDuledPL(
+      code: 'PL',
+      onSuccess: (data) {
+        compertitionResponse = data;
+        isLoadingScheDule = true;
+        update();
+      },
+      onError: (e) {
+        print(e);
+      },
+    );
   }
 
   ///
@@ -150,26 +238,72 @@ class HomeController extends GetxController {
   ///
   /// go to videp
   ///
-  void gotoVideo(String html){
-    Get.toNamed(HomeRoutes.VIDEOS,arguments: html);
+  void gotoVideo(String html) {
+    Get.toNamed(HomeRoutes.VIDEOS, arguments: html);
   }
 
- ///
+  ///
   /// get giải đấu lớn trên thế giới
   ///
   Future<void> getAllCompetition() async {
-   await _foodBallRespository.getCompetition(
-    onSuccess: (data) {
-      listGiaiDau = data;
-      print(listGiaiDau.length.toString());
-      
-      isLoadingGiaiDau = true;
-      update();
-    },
-    onError: (e) {
-      print(e);
-    },
-   );
- 
-}
+    await _foodBallRespository.getCompetition(
+      onSuccess: (data) {
+        listGiaiDau = data;
+
+        isLoadingGiaiDau = true;
+        update();
+      },
+      onError: (e) {
+        print(e);
+      },
+    );
+  }
+
+  ///
+  /// xử lí hình ảnh
+  ///
+  Widget processImage1(
+      {required imageUrl, double? height, double? widght, Widget? onLoading}) {
+    final String extension = imageUrl.substring(imageUrl.length - 3);
+
+    if (extension.toLowerCase() == 'png') {
+      String svgUrl = imageUrl.replaceAll('.png', '.svg');
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(10.0),
+        child: SvgPicture.network(
+          svgUrl,
+          height: height ?? 50,
+          width: widght ?? 50,
+          placeholderBuilder: (BuildContext context) =>
+              onLoading ?? CircularProgressIndicator(),
+        ),
+      );
+    } else {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(10.0),
+        child: SvgPicture.network(imageUrl,
+            height: height ?? 50,
+            width: widght ?? 50,
+            placeholderBuilder: (BuildContext context) =>
+                onLoading ?? CircularProgressIndicator()),
+      );
+    }
+  }
+
+  ///
+  /// thống kê bảng xếp hạng
+  ///
+  Future<void> getStanDing() async {
+    await _foodBallRespository.getStanding(
+      code: 'PL',
+      onSuccess: (data) {
+        stadingResponse = data;
+        isLoadingStanding = true;
+        update();
+      },
+      onError: (e) {
+        print(e);
+      },
+    );
+  }
 }

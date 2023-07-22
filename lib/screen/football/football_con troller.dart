@@ -37,6 +37,7 @@ class FootBallController extends GetxController {
   ///
   Future<void> getAll() async {
     await footBallRespository.getAllScheDuledPL(
+      season: '2023',
       onSuccess: (data) {
         compertitionResponse = data;
         isLoading = true;
@@ -55,6 +56,7 @@ class FootBallController extends GetxController {
   ///
   Future<void> getStanDing() async {
     await footBallRespository.getStanding(
+      season: '2023',
       code: getArgu.first,
       onSuccess: (data) {
         stadingResponse = data;

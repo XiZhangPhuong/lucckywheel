@@ -24,8 +24,8 @@ class DashBoardPage extends GetView<DashBoardController> {
             index: controller.currenIndex,
             children: [
               HomePage(),
-              NasaPage(),
-              NationPage(),
+              HomePage(),
+              HomePage(),
               
             ],
           ),

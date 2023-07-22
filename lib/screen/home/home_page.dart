@@ -1,10 +1,12 @@
+import 'package:contained_tab_bar_view/contained_tab_bar_view.dart';
+import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:luckywheel/base/loading.dart';
-import 'package:luckywheel/helper/validate.dart';
-import 'package:luckywheel/routes/routes_path/home_routes.dart';
 import 'package:luckywheel/screen/home/home_controller.dart';
+import 'package:luckywheel/temp.dart';
 import 'package:luckywheel/util/color_resources.dart';
 
 class HomePage extends GetView<HomeController> {
@@ -12,494 +14,445 @@ class HomePage extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    double maxHight = MediaQuery.of(context).size.height;
-    double maxWidght = MediaQuery.of(context).size.width;
     return GetBuilder(
       init: HomeController(),
-      builder: (HomeController controller) {
+      builder: (controller) {
         return Scaffold(
           backgroundColor: ColorResources.BACKGROUND,
-          body: controller.isLoading == false
-              ? Center(
-                  child: LoadingIndicator(),
-                )
-              : _homePage(controller),
+          appBar: controller.isLoadingScheDule == false
+              ? null
+              : _appBar(controller, context),
+          body: controller.isLoadingScheDule == false
+              ? LoadingIndicator()
+              : Container(
+                  padding: EdgeInsets.all(10.0),
+                  // tabbar custom
+                  child: ContainedTabBarView(
+                    tabBarProperties:
+                        TabBarProperties(indicatorColor: ColorResources.MAIN),
+                    tabs: [
+                      Text(
+                        'Lịch thi đấu',
+                        style: GoogleFonts.nunito(
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        'Bảng xếp hạng',
+                        style: GoogleFonts.nunito(
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
+                      )
+                    ],
+                    views: [
+                      _scheDuLe(controller),
+                      _bangXepHang(controller),
+                    ],
+                  ),
+                ),
         );
       },
     );
   }
 
   ///
-  /// body
+  /// appBr
   ///
-  Widget _homePage(HomeController controller) {
-    return SafeArea(
-      child: Container(
-        padding: EdgeInsets.all(10.0),
-        child: Column(
-          children: [
-            // appBar
-            _appBar(controller),
-            _matchHightLight(controller),
-            _cacGiaiDauLon(controller),
-            // Expanded(
-            //   child: ListView.builder(
-            //     shrinkWrap: true,
-            //     itemCount: controller.videoResponse.response!.length,
-            //     itemBuilder: (context, index) {
-            //       final item = controller.videoResponse.response![index];
-            //       return Builder(
-            //         builder: (context) {
-            //           return GestureDetector(
-            //             onTap: () {
-
-            //             },
-            //             child: ClipRRect(
-            //               borderRadius: BorderRadius.circular(10.0),
-            //               child: Image.network(item.thumbnail!,
-            //               height: 100,
-            //               fit: BoxFit.cover,
-            //               ),
-            //             ),
-            //           );
-            //         }
-            //       );
-            //     },
-            //   ),
-            // ),
-          ],
+  AppBar _appBar(HomeController controller, BuildContext context) {
+    return AppBar(
+      backgroundColor: ColorResources.BACKGROUND,
+      title: Text(
+        '${controller.compertitionResponse.competition!.name!} ${controller.currentYear}',
+        style: GoogleFonts.nunito(
+          color: Colors.white,
+          fontSize: 18,
         ),
       ),
+      leading: Image.network(
+        controller.compertitionResponse.competition!.emblem!,
+        fit: BoxFit.cover,
+      ),
+      actions: [
+        //_searchVongDau(controller),
+        IconButton(
+          onPressed: () {},
+          icon: Icon(
+            Icons.notifications_none,
+            color: Colors.white,
+          ),
+        ),
+        // popumenu button
+        PopupMenuButton(
+          initialValue: controller.currentYear,
+          itemBuilder: (context) {
+            return controller.listYear
+                .map(
+                  (e) => PopupMenuItem(
+                    onTap: () {
+                      controller.clickSearchYearch(e);
+                    },
+                    child: Text(
+                      'Năm ${e}',
+                      style: GoogleFonts.nunito(
+                          fontSize: 16,
+                          color: controller.currentYear == e
+                              ? ColorResources.MAIN
+                              : Colors.black),
+                    ),
+                  ),
+                )
+                .toList();
+          },
+        )
+      ],
     );
   }
+}
 
-  ///
-  /// Match Hightlight
-  ///
-  Widget _matchHightLight(HomeController controller) {
-    return Container(
-        child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+///
+/// tabbar custom
+///
+Widget _tabbarCustom(HomeController controller) {
+  return Container(
+    margin: EdgeInsets.only(
+      top: 5,
+    ),
+    child: Row(
       children: [
-        Text(
-          'Match Highlight',
-          style: GoogleFonts.nunito(
-              color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+        GestureDetector(
+          onTap: () {},
+          child: Container(
+            padding: EdgeInsets.symmetric(
+              vertical: 3,
+            ),
+            width: Get.width / 2 - 20,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(7.0),
+              border: Border.all(
+                  width: 1,
+                  color: controller.clickTabbar ? Colors.red : Colors.white),
+            ),
+            child: Center(
+              child: Text(
+                'Lịch thi đấu',
+                style: GoogleFonts.nunito(
+                    fontSize: 16,
+                    color: controller.clickTabbar
+                        ? ColorResources.MAIN
+                        : Colors.white),
+              ),
+            ),
+          ),
         ),
         SizedBox(
-          height: 5,
+          width: 15,
         ),
-        Container(
-          height: 200,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            shrinkWrap: true,
-            itemCount: 10,
-            itemBuilder: (context, index) {
-              final item = controller.videoResponse.response![index];
-              return GestureDetector(
-                onTap: () {
-                  controller.gotoVideo(item.videos![0].embed!.toString());
-                },
-                child: Container(
-                  margin: EdgeInsets.only(
-                    right: 10,
-                  ),
-                  child: Stack(
+        GestureDetector(
+          onTap: () {},
+          child: Container(
+            padding: EdgeInsets.symmetric(
+              vertical: 3,
+            ),
+            width: Get.width / 2 - 20,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(7.0),
+              border: Border.all(
+                  width: 1,
+                  color: controller.clickTabbar ? Colors.white : Colors.red),
+            ),
+            child: Center(
+              child: Text(
+                'Bảng xếp hạng',
+                style: GoogleFonts.nunito(
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+///
+///  sche dule
+///
+Widget _scheDuLe(HomeController controller) {
+  return Container(
+    padding: EdgeInsets.only(top: 10),
+    child: ListView.builder(
+      shrinkWrap: true,
+      itemCount: controller.compertitionResponse.matches!.length,
+      itemBuilder: (context, index) {
+        final item = controller.compertitionResponse.matches![index];
+        return GestureDetector(
+          onTap: () {},
+          child: Container(
+            padding: EdgeInsets.all(10.0),
+            margin: EdgeInsets.only(bottom: 10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(7.0),
+              border: Border.all(width: 1, color: Colors.white70),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
                     children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(10.0),
-                        child:Validate.nullOrEmpty(item.thumbnail) ? null : Image.network(
-                          item.thumbnail!,
-                          width: Get.width * 0.7,
+                      controller.processImage1(
+                        imageUrl: item.homeTeam!.crest!,
+                      ),
+                      SizedBox(
+                        height: 5.0,
+                      ),
+                      Text(
+                        item.homeTeam!.shortName!,
+                        style: GoogleFonts.nunito(
+                          fontSize: 14,
+                          color: Colors.white,
                         ),
                       ),
                     ],
                   ),
                 ),
-              );
-            },
-          ),
-        ),
-      ],
-    ));
-  }
-
-  ///
-  /// appBar custom
-  ///
-  Widget _appBar(HomeController controller) {
-    return Container(
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              'Jang-Sport',
-              style: GoogleFonts.nunito(
-                color: ColorResources.WHITE,
-                fontSize: 22,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          IconButton(
-            onPressed: () {},
-            icon: Icon(
-              Icons.search,
-              color: ColorResources.WHITE,
-            ),
-          ),
-          IconButton(
-            onPressed: () {},
-            icon: Icon(
-              Icons.notifications_none_outlined,
-              color: ColorResources.WHITE,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  ///
-  ///
-  ///
-  Container _widetOld(
-      double maxHight, double maxWidght, HomeController controller) {
-    return Container(
-      decoration: BoxDecoration(
-          gradient: LinearGradient(
-              colors: [Colors.black12, Colors.blue.withOpacity(0.5)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight)),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // hinh anh thien van
-            GestureDetector(
-              onTap: () {
-                Get.toNamed(
-                  HomeRoutes.NASA,
-                );
-              },
-              child: Container(
-                height: maxHight / 15,
-                margin: EdgeInsets.symmetric(horizontal: maxWidght / 15),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(width: 1, color: Colors.black)),
-                child: Center(
-                  child: Text(
-                    'txt_hinhanhthienvan'.tr,
-                    style: GoogleFonts.nunito(
-                      color: Colors.white,
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            GestureDetector(
-              onTap: () {
-                Get.toNamed(HomeRoutes.NATION);
-              },
-              child: Container(
-                height: maxHight / 15,
-                margin: EdgeInsets.symmetric(horizontal: maxWidght / 15),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(width: 1, color: Colors.black)),
-                child: Center(
-                  child: Text(
-                    'txt_thongtinquocgia'.tr,
-                    style: GoogleFonts.nunito(
-                      color: Colors.white,
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-            // techport
-            SizedBox(
-              height: 10,
-            ),
-            GestureDetector(
-              onTap: () {
-                Get.toNamed(HomeRoutes.TECHPORT);
-              },
-              child: Container(
-                height: maxHight / 15,
-                margin: EdgeInsets.symmetric(horizontal: maxWidght / 15),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(width: 1, color: Colors.black)),
-                child: Center(
-                  child: Text(
-                    'txt_congcongnghe'.tr.tr,
-                    style: GoogleFonts.nunito(
-                      color: Colors.white,
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-            // techTranfer
-            SizedBox(
-              height: 10,
-            ),
-            GestureDetector(
-              onTap: () {
-                Get.toNamed(HomeRoutes.TECHTRANFER);
-              },
-              child: Container(
-                height: maxHight / 15,
-                margin: EdgeInsets.symmetric(horizontal: maxWidght / 15),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(width: 1, color: Colors.black)),
-                child: Center(
-                  child: Text(
-                    'txt_bangsangche'.tr,
-                    style: GoogleFonts.nunito(
-                      color: Colors.white,
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-            // newspaper
-            // techTranfer
-            SizedBox(
-              height: 10,
-            ),
-            GestureDetector(
-              onTap: () {
-                Get.toNamed(HomeRoutes.NEWSPAPER);
-              },
-              child: Container(
-                height: maxHight / 15,
-                margin: EdgeInsets.symmetric(horizontal: maxWidght / 15),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(width: 1, color: Colors.black)),
-                child: Center(
-                  child: Text(
-                    'txt_docbao'.tr,
-                    style: GoogleFonts.nunito(
-                      color: Colors.white,
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-            // food FootBallBinding
-            // techTranfer
-            SizedBox(
-              height: 10,
-            ),
-            GestureDetector(
-              onTap: () {
-                Get.toNamed(HomeRoutes.COMPETITION);
-              },
-              child: Container(
-                height: maxHight / 15,
-                margin: EdgeInsets.symmetric(horizontal: maxWidght / 15),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(width: 1, color: Colors.black)),
-                child: Center(
-                  child: Text(
-                    'Bóng đá'.tr,
-                    style: GoogleFonts.nunito(
-                      color: Colors.white,
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-            // language
-            SizedBox(
-              height: 10,
-            ),
-            GestureDetector(
-              onTap: () {
-                _showBottomSheetLanguage(controller);
-              },
-              child: Container(
-                height: maxHight / 15,
-                margin: EdgeInsets.symmetric(horizontal: maxWidght / 15),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(width: 1, color: Colors.black)),
-                child: Center(
-                  child: Text(
-                    'txt_ngonngu'.tr,
-                    style: GoogleFonts.nunito(
-                      color: Colors.white,
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  ///
-  /// showBottomSheet Change Language
-  ///
-  Future<dynamic> _showBottomSheetLanguage(HomeController controller) async {
-    await Get.bottomSheet(
-      GetBuilder<HomeController>(
-          init: HomeController(),
-          builder: (HomeController controller) {
-            return Container(
-              height: Get.height * 0.7,
-              padding: EdgeInsets.all(8.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(12),
-                  topRight: Radius.circular(12),
-                ),
-                gradient: LinearGradient(
-                    colors: [Colors.black, Colors.black12, Colors.black38],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    'txt_chonngonngu'.tr,
-                    style: GoogleFonts.nunito(
-                      fontSize: 20,
-                      color: Colors.white,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Expanded(
-                    child: GridView.builder(
-                      //  physics: const NeverScrollableScrollPhysics(),
-                      itemCount: controller
-                          .dataList.length, // Số lượng item trong grid
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount:
-                            3, // Số lượng widget trên mỗi hàng ngang
+                Expanded(
+                  child: Column(
+                    children: [
+                      Text(
+                        Temp.convertUtcToVietnamTime(
+                          item.utcDate!,
+                        ),
+                        style: GoogleFonts.nunito(
+                          fontSize: 14,
+                          color: Colors.white,
+                        ),
                       ),
-                      itemBuilder: (context, index) {
-                        final item = controller.dataList[
-                            index]; // Dữ liệu của item tại vị trí index
-
-                        return GestureDetector(
-                          onTap: () {
-                            controller.changeLanguage(index);
-                            //et.back();
-                          },
-                          child: Container(
-                            padding: EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5.0),
-                                color: controller.selectTed == index
-                                    ? Colors.black
-                                    : null),
-                            child: Column(
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  child: Image.network(
-                                    item['url'].toString(),
-                                    height: 60,
-                                    width: 80,
-                                  ),
-                                ), // Hình ảnh từ URL
-                                SizedBox(
-                                  height: 8,
-                                ),
-                                Text(
-                                  item['title'].toString(),
-                                  style: GoogleFonts.nunito(
-                                    fontSize: 16,
-                                    color: Colors.white,
-                                  ),
-                                ), // Văn bản
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  )
-                ],
-              ),
-            );
-          }),
-    );
-  }
+                      IconButton(
+                        onPressed: () {},
+                        icon: Icon(
+                          Icons.notifications_none,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    children: [
+                      controller.processImage1(
+                        imageUrl: item.awayTeam!.crest!,
+                      ),
+                      SizedBox(
+                        height: 5.0,
+                      ),
+                      Text(
+                        item.awayTeam!.shortName!,
+                        style: GoogleFonts.nunito(
+                          fontSize: 14,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    ),
+  );
 }
 
+///
+/// dropDowButton
+///
+Widget _searchVongDau(HomeController controller) {
+  return Container(
+    alignment: Alignment.centerRight,
+    child: DropdownButton(
+      value: controller.valueVongDau,
+      underline: Container(),
+      style: GoogleFonts.nunito(
+        color: Colors.black,
+      ),
+      icon: Icon(
+        Icons.arrow_drop_down_circle_outlined,
+        color: Colors.white70,
+        size: 20,
+      ),
+      items: controller.listVongDau
+          .map(
+            (e) => DropdownMenuItem(
+              value: e,
+              child: Text(
+                e,
+                style: GoogleFonts.nunito(
+                  fontSize: 18,
+                  color:
+                      e == controller.valueVongDau ? Colors.red : Colors.black,
+                ),
+              ),
+            ),
+          )
+          .toList(),
+      onChanged: (value) {
+        controller.clickDropDowButton(value!);
+      },
+    ),
+  );
+}
 
 ///
-/// các giải đấu lớn
+/// Widget Bảng xếp hạng
 ///
-Widget _cacGiaiDauLon(HomeController homeController){
-  return Container(
-     child: Column(
-      children: [
-        Text('Các giải đấu',style: GoogleFonts.nunito(
-          color: Colors.white,
-          fontSize: 16,
-        ),),
-        SizedBox(height: 5,),
-        Container(
-          height: 200,
-          child: ListView.builder(
-            shrinkWrap: true,
-            scrollDirection: Axis.horizontal,
-            itemCount: homeController.listGiaiDau.length,
-            itemBuilder: (context, index) {
-              final item = homeController.listGiaiDau[index];
-              return GestureDetector(
-                onTap: () {
-                  
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(width: 1,color: Colors.white),
-                  ),
-                  child: Center(
-                    child: Text(item.name!,style: GoogleFonts.nunito(
-                      color: Colors.red,
-                      fontSize: 14,
-                    ),),
-                  ),
-                ),
-              );
-            },
+Widget _bangXepHang(HomeController controller) {
+  List<DataRow> rows = []; // Danh sách các DataRow
+  for (int i = 0; i < controller.stadingResponse.standings!.length; i++) {
+    for (var item in controller.stadingResponse.standings![i].table!) {
+      DataRow row = DataRow(cells: [
+        DataCell(
+          Text(
+            (item.position!.toString()),
+            style: GoogleFonts.nunito(
+              fontSize: 14,
+              color: Colors.white,
+            ),
           ),
-        )
-      ],
-     ),
-  );
+        ),
+        DataCell(
+          Row(
+            children: [
+              Flexible(
+                child: controller.processImage1(
+                    imageUrl: item.team!.crest!, height: 30, widght: 30),
+              ),
+              SizedBox(
+                width: 5.0,
+              ),
+              Text(
+                item.team!.shortName!,
+                style: GoogleFonts.nunito(
+                  fontSize: 14,
+                  color: Colors.white,
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+            ],
+          ),
+        ),
+        DataCell(
+          Text(
+            item.points!.toString(),
+            style: GoogleFonts.nunito(
+              fontSize: 14,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        DataCell(
+          Text(
+            item.won!.toString(),
+            style: GoogleFonts.nunito(
+              fontSize: 14,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        DataCell(
+          Text(
+            item.draw!.toString(),
+            style: GoogleFonts.nunito(
+              fontSize: 14,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        DataCell(
+          Text(
+            item.lost!.toString(),
+            style: GoogleFonts.nunito(
+              fontSize: 14,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ]);
+      rows.add(row);
+    }
+  }
+  return controller.isLoadingStanding == false
+      ? LoadingIndicator()
+      : Container(
+          child: DataTable2(
+            columns: [
+              // Các cột của DataTable
+              DataColumn2(
+                  label: Text(
+                    ' ',
+                    style: GoogleFonts.nunito(
+                      color: Colors.white,
+                      fontSize: 14,
+                    ),
+                  ),
+                  size: ColumnSize.S),
+              DataColumn2(
+                  label: Text(
+                    'Câu lạc bộ',
+                    style: GoogleFonts.nunito(
+                      color: Colors.white,
+                      fontSize: 14,
+                    ),
+                  ),
+                  size: ColumnSize.L,
+                  fixedWidth: 150),
+              DataColumn2(
+                  label: Text(
+                    'P',
+                    style: GoogleFonts.nunito(
+                      color: Colors.white,
+                      fontSize: 14,
+                    ),
+                  ),
+                  size: ColumnSize.S),
+              DataColumn2(
+                  label: Text(
+                    'W',
+                    style: GoogleFonts.nunito(
+                      color: Colors.white,
+                      fontSize: 14,
+                    ),
+                  ),
+                  size: ColumnSize.S),
+              DataColumn2(
+                  label: Text(
+                    'H',
+                    style: GoogleFonts.nunito(
+                      color: Colors.white,
+                      fontSize: 14,
+                    ),
+                  ),
+                  size: ColumnSize.S),
+              DataColumn2(
+                  label: Text(
+                    'L',
+                    style: GoogleFonts.nunito(
+                      color: Colors.white,
+                      fontSize: 14,
+                    ),
+                  ),
+                  size: ColumnSize.S),
+            ],
+            rows: rows,
+            columnSpacing: 8,
+            horizontalMargin: 12,
+          ),
+        );
 }
