@@ -1,8 +1,8 @@
-
 import 'package:dio/dio.dart';
 import 'package:luckywheel/model/football/cacgiaidau_response.dart';
 import 'package:luckywheel/model/football/competitions_response.dart';
 import 'package:luckywheel/model/football/stading_response.dart';
+import 'package:luckywheel/model/football/top_score_response.dart';
 import 'package:luckywheel/temp.dart';
 
 class FoodBallRespository {
@@ -16,8 +16,8 @@ class FoodBallRespository {
   /// Gọi tất cả các trận đấu sắp diễn ra ở Ngoại Hạng Anh
   ///
   Future<void> getAllScheDuledPL({
-     String? code,
-     String? season,
+    String? code,
+    String? season,
     required Function(CompetitionsResponse data) onSuccess,
     required Function(dynamic e) onError,
   }) async {
@@ -68,13 +68,34 @@ class FoodBallRespository {
       final response = await dio.get(
           'https://api.football-data.org/v4/competitions/',
           options: options);
-          if(response.statusCode==200){
-            final resuilt = response.data['competitions'] as List<dynamic>;
-            onSuccess(resuilt.map((e) => CacGiaiDauResponse.fromMap(e)).toList());
-          }
-    } catch (e) 
-    {
+      if (response.statusCode == 200) {
+        final resuilt = response.data['competitions'] as List<dynamic>;
+        onSuccess(resuilt.map((e) => CacGiaiDauResponse.fromMap(e)).toList());
+      }
+    } catch (e) {
       print(e);
+    }
+  }
+
+  ///
+  /// top bàn thắng ngoại hạng Anh theo mùa
+  ///
+  Future<void> getTopScore({
+    int? season,
+    required Function(List<TopScoreResponse> data) onSuccess,
+    required Function(dynamic e) onError,
+  }) async {
+    try{
+      final response = await dio.get('http://api.football-data.org/v4/competitions/PL/scorers?season=2020',
+      options:  options
+      );
+      if(response.statusCode==200){
+        final resuilt = response.data['scorers'] as List<dynamic>;
+        print(resuilt);
+        onSuccess(resuilt.map((e) => TopScoreResponse.fromMap(e)).toList());
+      }
+    }catch(e){
+      onError(e);
     }
   }
 }

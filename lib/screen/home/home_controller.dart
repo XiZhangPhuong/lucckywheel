@@ -6,6 +6,7 @@ import 'package:luckywheel/base/loading.dart';
 import 'package:luckywheel/model/football/cacgiaidau_response.dart';
 import 'package:luckywheel/model/football/competitions_response.dart';
 import 'package:luckywheel/model/football/stading_response.dart';
+import 'package:luckywheel/model/football/top_score_response.dart';
 import 'package:luckywheel/model/football/video_response.dart';
 import 'package:luckywheel/repository/footballl_repository.dart';
 import 'package:luckywheel/repository/video_repository.dart';
@@ -31,6 +32,10 @@ class HomeController extends GetxController {
   int matchday = 1;
   // list năm các mùa giải Ngoại Hạng Anh 2020 - 2023
   List<int> listYear = [];
+
+  // list top score
+  List<TopScoreResponse> listTopScore = [];
+  bool isLoadingTopScore = false;
   List<Map<String, dynamic>> dataList = [
     {
       'url': 'https://flagcdn.com/w320/vn.png',
@@ -95,6 +100,7 @@ class HomeController extends GetxController {
     initListYear();
     getAll();
     getStanDing();
+    getTopScore();
   }
 
   ///
@@ -103,19 +109,20 @@ class HomeController extends GetxController {
   void initListYear() {
     currentYear = DateTime.now().year;
     listYear.add(currentYear);
-    for(int i =1;i<=3;i++){
-      listYear.add(currentYear -i);
+    for (int i = 1; i <= 3; i++) {
+      listYear.add(currentYear - i);
     }
   }
 
   ///
   /// clickSearchYear
   ///
-  void clickSearchYearch(int value){
-     currentYear = value;
-     getAll();
-     update();
+  void clickSearchYearch(int value) {
+    currentYear = value;
+    getAll();
+    update();
   }
+
   ///
   /// click tabbar
   ///
@@ -299,6 +306,23 @@ class HomeController extends GetxController {
       onSuccess: (data) {
         stadingResponse = data;
         isLoadingStanding = true;
+        update();
+      },
+      onError: (e) {
+        print(e);
+      },
+    );
+  }
+
+  ///
+  /// lấy top cầu thủ ghi bàn
+  ///
+  Future<void> getTopScore() async {
+    await _foodBallRespository.getTopScore(
+      season:  2022,
+      onSuccess: (data) {
+        listTopScore = data;
+        isLoadingTopScore = true;
         update();
       },
       onError: (e) {

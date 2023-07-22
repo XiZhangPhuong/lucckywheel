@@ -1,10 +1,10 @@
 import 'package:contained_tab_bar_view/contained_tab_bar_view.dart';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:luckywheel/base/loading.dart';
+import 'package:luckywheel/helper/validate.dart';
 import 'package:luckywheel/screen/home/home_controller.dart';
 import 'package:luckywheel/temp.dart';
 import 'package:luckywheel/util/color_resources.dart';
@@ -28,27 +28,50 @@ class HomePage extends GetView<HomeController> {
                   padding: EdgeInsets.all(10.0),
                   // tabbar custom
                   child: ContainedTabBarView(
-                    tabBarProperties:
-                        TabBarProperties(indicatorColor: ColorResources.MAIN),
+                    tabBarProperties: TabBarProperties(
+                      indicatorColor: ColorResources.MAIN,
+                      alignment: TabBarAlignment.center,
+                        : true,
+                    ),
                     tabs: [
-                      Text(
-                        'Lịch thi đấu',
-                        style: GoogleFonts.nunito(
-                          fontSize: 16,
-                          color: Colors.white,
+                      Container(
+                        width: Get.width / 3,
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Lịch thi đấu',
+                          style: GoogleFonts.nunito(
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
-                      Text(
-                        'Bảng xếp hạng',
-                        style: GoogleFonts.nunito(
-                          fontSize: 16,
-                          color: Colors.white,
+                      Container(
+                        width: Get.width / 3,
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Bảng xếp hạng',
+                          style: GoogleFonts.nunito(
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
                         ),
-                      )
+                      ),
+                      Container(
+                        width: Get.width / 3,
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Top bàn thắng',
+                          style: GoogleFonts.nunito(
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
                     ],
                     views: [
                       _scheDuLe(controller),
                       _bangXepHang(controller),
+                      _topScore(controller),
                     ],
                   ),
                 ),
@@ -316,7 +339,7 @@ Widget _bangXepHang(HomeController controller) {
   List<DataRow> rows = []; // Danh sách các DataRow
   for (int i = 0; i < controller.stadingResponse.standings!.length; i++) {
     for (var item in controller.stadingResponse.standings![i].table!) {
-      DataRow row = DataRow(cells: [
+      DataRow row = DataRow(onLongPress: () {}, cells: [
         DataCell(
           Text(
             (item.position!.toString()),
@@ -327,6 +350,9 @@ Widget _bangXepHang(HomeController controller) {
           ),
         ),
         DataCell(
+          onTap: () {
+            print(item.team!.name!);
+          },
           Row(
             children: [
               Flexible(
@@ -453,6 +479,163 @@ Widget _bangXepHang(HomeController controller) {
             rows: rows,
             columnSpacing: 8,
             horizontalMargin: 12,
+          ),
+        );
+}
+
+///
+/// top score
+///
+Widget _topScore(HomeController controller) {
+  // row
+  List<DataRow> rows = [];
+  for (int i = 0; i < controller.listTopScore.length; i++) {
+    final item = controller.listTopScore[i];
+    DataRow row = DataRow(cells: [
+      DataCell(
+        Text(
+          (i + 1).toString(),
+          style: GoogleFonts.nunito(
+            fontSize: 14,
+            color: Colors.white,
+          ),
+        ),
+      ),
+      DataCell(
+        onTap: () {
+          
+        },
+        Text(
+          item.player!.name!,
+          style: GoogleFonts.nunito(
+            fontSize: 14,
+            color: Colors.white,
+          ),
+        ),
+      ),
+      DataCell(
+        onTap: () {},
+        Row(
+          children: [
+            Flexible(
+              child: controller.processImage1(
+                  imageUrl: item.team!.crest!, height: 30, widght: 30),
+            ),
+            SizedBox(
+              width: 5.0,
+            ),
+            Text(
+              item.team!.shortName!,
+              style: GoogleFonts.nunito(
+                fontSize: 14,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+      DataCell(
+        Text(
+          Validate.nullOrEmpty(item.goals) ? '0' : item.goals!.toString(),
+          style: GoogleFonts.nunito(
+            fontSize: 14,
+            color: Colors.white,
+          ),
+        ),
+      ),
+      DataCell(
+        Text(
+          Validate.nullOrEmpty(item.assists) ? '0' : item.assists!.toString(),
+          style: GoogleFonts.nunito(
+            fontSize: 14,
+            color: Colors.white,
+          ),
+        ),
+      ),
+      DataCell(
+        Text(
+          Validate.nullOrEmpty(item.penalties)
+              ? '0'
+              : item.penalties!.toString(),
+          style: GoogleFonts.nunito(
+            fontSize: 14,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    ]);
+    rows.add(row);
+  }
+
+  return controller.isLoadingTopScore == false
+      ? LoadingIndicator()
+      : Container(
+          child: DataTable2(
+            columns: [
+              // Các cột của DataTable
+              DataColumn2(
+                  label: Text(
+                    ' ',
+                    style: GoogleFonts.nunito(
+                      color: Colors.white,
+                      fontSize: 14,
+                    ),
+                  ),
+                  size: ColumnSize.M),
+              DataColumn2(
+                label: Text(
+                  'Cầu thủ',
+                  style: GoogleFonts.nunito(
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
+                ),
+                size: ColumnSize.L,
+                fixedWidth: 100,
+              ),
+              DataColumn2(
+                label: Text(
+                  'Câu lạc bộ',
+                  style: GoogleFonts.nunito(
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
+                ),
+                size: ColumnSize.L,
+                fixedWidth: 130,
+              ),
+              DataColumn2(
+                label: Text(
+                  'G',
+                  style: GoogleFonts.nunito(
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
+                ),
+                size: ColumnSize.M,
+              ),
+              DataColumn2(
+                  label: Text(
+                    'A',
+                    style: GoogleFonts.nunito(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                  ),
+                  size: ColumnSize.M),
+              DataColumn2(
+                  label: Text(
+                    'P',
+                    style: GoogleFonts.nunito(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                  ),
+                  size: ColumnSize.M),
+            ],
+            rows: rows,
+            columnSpacing: 8,
+            horizontalMargin: 0,
           ),
         );
 }
