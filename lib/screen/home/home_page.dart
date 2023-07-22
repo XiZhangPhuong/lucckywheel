@@ -31,7 +31,7 @@ class HomePage extends GetView<HomeController> {
                     tabBarProperties: TabBarProperties(
                       indicatorColor: ColorResources.MAIN,
                       alignment: TabBarAlignment.center,
-                        : true,
+                      isScrollable: true,
                     ),
                     tabs: [
                       Container(
