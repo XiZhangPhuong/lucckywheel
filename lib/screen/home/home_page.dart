@@ -28,6 +28,10 @@ class HomePage extends GetView<HomeController> {
                   padding: EdgeInsets.all(10.0),
                   // tabbar custom
                   child: ContainedTabBarView(
+                    initialIndex: controller.selectTed,
+                    onChange: (p0) {
+                      controller.clickTabBar(p0);
+                    },
                     tabBarProperties: TabBarProperties(
                       indicatorColor: ColorResources.MAIN,
                       alignment: TabBarAlignment.center,
@@ -135,85 +139,20 @@ class HomePage extends GetView<HomeController> {
 }
 
 ///
-/// tabbar custom
-///
-Widget _tabbarCustom(HomeController controller) {
-  return Container(
-    margin: EdgeInsets.only(
-      top: 5,
-    ),
-    child: Row(
-      children: [
-        GestureDetector(
-          onTap: () {},
-          child: Container(
-            padding: EdgeInsets.symmetric(
-              vertical: 3,
-            ),
-            width: Get.width / 2 - 20,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(7.0),
-              border: Border.all(
-                  width: 1,
-                  color: controller.clickTabbar ? Colors.red : Colors.white),
-            ),
-            child: Center(
-              child: Text(
-                'Lịch thi đấu',
-                style: GoogleFonts.nunito(
-                    fontSize: 16,
-                    color: controller.clickTabbar
-                        ? ColorResources.MAIN
-                        : Colors.white),
-              ),
-            ),
-          ),
-        ),
-        SizedBox(
-          width: 15,
-        ),
-        GestureDetector(
-          onTap: () {},
-          child: Container(
-            padding: EdgeInsets.symmetric(
-              vertical: 3,
-            ),
-            width: Get.width / 2 - 20,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(7.0),
-              border: Border.all(
-                  width: 1,
-                  color: controller.clickTabbar ? Colors.white : Colors.red),
-            ),
-            child: Center(
-              child: Text(
-                'Bảng xếp hạng',
-                style: GoogleFonts.nunito(
-                  fontSize: 16,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    ),
-  );
-}
-
-///
 ///  sche dule
 ///
 Widget _scheDuLe(HomeController controller) {
   return Container(
     padding: EdgeInsets.only(top: 10),
-    child: ListView.builder(
+    child: ListView .builder(
       shrinkWrap: true,
       itemCount: controller.compertitionResponse.matches!.length,
       itemBuilder: (context, index) {
         final item = controller.compertitionResponse.matches![index];
         return GestureDetector(
-          onTap: () {},
+          onTap: () {
+            print(item.id);
+          },
           child: Container(
             padding: EdgeInsets.all(10.0),
             margin: EdgeInsets.only(bottom: 10),
@@ -254,14 +193,22 @@ Widget _scheDuLe(HomeController controller) {
                           color: Colors.white,
                         ),
                       ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.notifications_none,
-                          color: Colors.white,
-                          size: 30,
-                        ),
-                      ),
+                      item.status == "FINISHED"
+                          ? Text(
+                              '${item.score!.fullTime!.home} : ${item.score!.fullTime!.away!}',
+                              style: GoogleFonts.nunito(
+                                fontSize: 22,
+                                color: Colors.white,
+                              ),
+                            )
+                          : IconButton(
+                              onPressed: () {},
+                              icon: Icon(
+                                Icons.notifications_none,
+                                color: Colors.white,
+                                size: 30,
+                              ),
+                            ),
                     ],
                   ),
                 ),
@@ -351,7 +298,7 @@ Widget _bangXepHang(HomeController controller) {
         ),
         DataCell(
           onTap: () {
-            print(item.team!.name!);
+            controller.gotoTeamPage(item.team!.id!);
           },
           Row(
             children: [
@@ -502,9 +449,7 @@ Widget _topScore(HomeController controller) {
         ),
       ),
       DataCell(
-        onTap: () {
-          
-        },
+        onTap: () {},
         Text(
           item.player!.name!,
           style: GoogleFonts.nunito(
@@ -567,10 +512,11 @@ Widget _topScore(HomeController controller) {
     rows.add(row);
   }
 
-  return controller.isLoadingTopScore == false
-      ? LoadingIndicator()
+  return controller.isLoadingTopScore == false 
+      ? LoadingIndicator() 
       : Container(
           child: DataTable2(
+            scrollController: controller.scrollControllerTopScore,
             columns: [
               // Các cột của DataTable
               DataColumn2(
@@ -583,11 +529,17 @@ Widget _topScore(HomeController controller) {
                   ),
                   size: ColumnSize.M),
               DataColumn2(
-                label: Text(
-                  'Cầu thủ',
-                  style: GoogleFonts.nunito(
-                    color: Colors.white,
-                    fontSize: 16,
+                label: GestureDetector(
+                  onTap: () {
+                    controller.limitTopScore += 10;
+                    controller.getTopScore();
+                  },
+                  child: Text(
+                    'Cầu thủ',
+                    style: GoogleFonts.nunito(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
                   ),
                 ),
                 size: ColumnSize.L,
@@ -638,4 +590,11 @@ Widget _topScore(HomeController controller) {
             horizontalMargin: 0,
           ),
         );
+}
+
+///
+/// thông báo hoặc tỉ số
+///
+Widget _thongBaoHoacTiSo() {
+  return Container();
 }

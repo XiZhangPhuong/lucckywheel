@@ -17,6 +17,8 @@ import 'package:luckywheel/screen/nation/nation_binding.dart';
 import 'package:luckywheel/screen/nation/nation_page.dart';
 import 'package:luckywheel/screen/newspaper/newspaper_binding.dart';
 import 'package:luckywheel/screen/newspaper/newspaper_page.dart';
+import 'package:luckywheel/screen/team/team_binding.dart';
+import 'package:luckywheel/screen/team/team_page.dart';
 import 'package:luckywheel/screen/techport/techport_page.dart';
 import 'package:luckywheel/screen/techtransfer/techtransfer_binding.dart';
 import 'package:luckywheel/screen/techtransfer/techtransfer_page.dart';
@@ -38,6 +40,7 @@ class HomeRoutes {
   static const String COMPETITION = '/competition';
   static const String DASHBOARD = '/dashboard';
   static const String VIDEOS = '/videos';
+  static const String TEAM = '/team';
   static List<GetPage> list = [
     GetPage(
       name: HOME,
@@ -119,6 +122,13 @@ class HomeRoutes {
       name: VIDEOS,
       page: () => const VideosPage(),
       binding: VideosBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 500),
+    ),
+    GetPage(
+      name: TEAM,
+      page: () => const TeamPage(),
+      binding: TeamBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 500),
     ),

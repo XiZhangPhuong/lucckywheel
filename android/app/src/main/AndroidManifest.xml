@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.luckywheel">
+    package="com.example.jangsport">
    <application
-        android:label="luckywheel"
+        android:label="JangSport"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

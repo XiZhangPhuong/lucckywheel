@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:luckywheel/model/football/cacgiaidau_response.dart';
 import 'package:luckywheel/model/football/competitions_response.dart';
 import 'package:luckywheel/model/football/stading_response.dart';
+import 'package:luckywheel/model/football/team_responsee.dart';
 import 'package:luckywheel/model/football/top_score_response.dart';
 import 'package:luckywheel/temp.dart';
 
@@ -17,13 +18,13 @@ class FoodBallRespository {
   ///
   Future<void> getAllScheDuledPL({
     String? code,
-    String? season,
+    int? season,
     required Function(CompetitionsResponse data) onSuccess,
     required Function(dynamic e) onError,
   }) async {
     try {
       final response = await dio.get(
-          'https://api.football-data.org/v4/competitions/${code}/matches',
+          'https://api.football-data.org/v4/competitions/${code}/matches?&season=${season}',
           options: options);
       if (response.statusCode == 200) {
         dynamic resuilt = response.data;
@@ -38,14 +39,14 @@ class FoodBallRespository {
   /// Thống kê bảng xếp hạng mùa giải 2023-2024 Ngoại Hạng Anh
   ///
   Future<void> getStanding({
-    String? season,
+    int? season,
     String? code,
     required Function(StadingResponse data) onSuccess,
     required Function(dynamic e) onError,
   }) async {
     try {
       final response = await dio.get(
-        'https://api.football-data.org/v4/competitions/${code}/standings',
+        'https://api.football-data.org/v4/competitions/${code}/standings?season=${season}',
         options: options,
       );
       if (response.statusCode == 200) {
@@ -82,11 +83,12 @@ class FoodBallRespository {
   ///
   Future<void> getTopScore({
     int? season,
+    int? limit,
     required Function(List<TopScoreResponse> data) onSuccess,
     required Function(dynamic e) onError,
   }) async {
     try{
-      final response = await dio.get('http://api.football-data.org/v4/competitions/PL/scorers?season=2020',
+      final response = await dio.get('http://api.football-data.org/v4/competitions/PL/scorers?season=${season}&limit=${limit}',
       options:  options
       );
       if(response.statusCode==200){
@@ -97,5 +99,24 @@ class FoodBallRespository {
     }catch(e){
       onError(e);
     }
+  }
+
+  ///
+  /// chi tiet doi hinh
+  ///
+  Future<void> detailtTeam({
+    required int id,
+    required Function(TeamResponse data) onSuccess,
+    required Function(dynamic e) onError, 
+  }) async {
+     try{
+       final response = await dio.get('http://api.football-data.org/v4/teams/${id}',options: options);
+       if(response.statusCode==200){
+        final resuilt = response.data as dynamic;
+         onSuccess(TeamResponse.fromMap(resuilt));
+       }
+     }catch(e){
+       onError(e);
+     }
   }
 }

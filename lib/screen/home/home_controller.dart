@@ -6,6 +6,7 @@ import 'package:luckywheel/base/loading.dart';
 import 'package:luckywheel/model/football/cacgiaidau_response.dart';
 import 'package:luckywheel/model/football/competitions_response.dart';
 import 'package:luckywheel/model/football/stading_response.dart';
+import 'package:luckywheel/model/football/team_responsee.dart';
 import 'package:luckywheel/model/football/top_score_response.dart';
 import 'package:luckywheel/model/football/video_response.dart';
 import 'package:luckywheel/repository/footballl_repository.dart';
@@ -21,7 +22,6 @@ class HomeController extends GetxController {
   bool isLoading = false;
   final FoodBallRespository _foodBallRespository = FoodBallRespository();
   bool isLoadingGiaiDau = false;
-  bool clickTabbar = true;
   bool isLoadingScheDule = false;
   bool isLoadingStanding = false;
   StadingResponse stadingResponse = StadingResponse();
@@ -36,6 +36,9 @@ class HomeController extends GetxController {
   // list top score
   List<TopScoreResponse> listTopScore = [];
   bool isLoadingTopScore = false;
+  int limitTopScore = 20;
+  // bắt sự kiện cuộn Top bàn thắng
+  ScrollController scrollControllerTopScore = ScrollController();
   List<Map<String, dynamic>> dataList = [
     {
       'url': 'https://flagcdn.com/w320/vn.png',
@@ -95,12 +98,20 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    //  getVideo();
-    // getAllCompetition();
+    scrollControllerTopScore.addListener(_scrollListener);
     initListYear();
     getAll();
     getStanDing();
     getTopScore();
+  }
+
+  @override
+  void onClose() {
+    scrollControllerTopScore.removeListener(() {
+      _scrollListener();
+    });
+    scrollControllerTopScore.dispose();
+    super.onClose();
   }
 
   ///
@@ -118,16 +129,26 @@ class HomeController extends GetxController {
   /// clickSearchYear
   ///
   void clickSearchYearch(int value) {
+    // xu li call lai API
+    isLoadingScheDule = false;
+    isLoadingStanding = false;
+    isLoadingTopScore = false;
     currentYear = value;
+    limitTopScore = 20;
+    listGiaiDau.clear();
+    compertitionResponse = CompetitionsResponse();
+    listTopScore.clear();
     getAll();
-    update();
+    getStanDing();
+    getTopScore();
   }
 
   ///
   /// click tabbar
   ///
-  void changeTabbar({required bool isTab}) {
-    clickTabbar = isTab;
+  void clickTabBar(int index) {
+    selectTed = index;
+    print(index);
     update();
   }
 
@@ -162,6 +183,7 @@ class HomeController extends GetxController {
   Future<void> getAll() async {
     await _foodBallRespository.getAllScheDuledPL(
       code: 'PL',
+      season: currentYear,
       onSuccess: (data) {
         compertitionResponse = data;
         isLoadingScheDule = true;
@@ -303,6 +325,7 @@ class HomeController extends GetxController {
   Future<void> getStanDing() async {
     await _foodBallRespository.getStanding(
       code: 'PL',
+      season: currentYear,
       onSuccess: (data) {
         stadingResponse = data;
         isLoadingStanding = true;
@@ -319,15 +342,39 @@ class HomeController extends GetxController {
   ///
   Future<void> getTopScore() async {
     await _foodBallRespository.getTopScore(
-      season:  2022,
+      season: currentYear,
+      limit: limitTopScore,
       onSuccess: (data) {
         listTopScore = data;
         isLoadingTopScore = true;
         update();
       },
       onError: (e) {
+        isLoadingTopScore = false;
         print(e);
       },
     );
+  }
+
+  ///
+  /// go to team page
+  ///
+  void gotoTeamPage(int sent) {
+    Get.toNamed(HomeRoutes.TEAM, arguments: sent);
+  }
+
+  ///
+  /// lắng nghe sự kiện cuộn top bàn thắng
+  ///
+  void _scrollListener() {
+    if (scrollControllerTopScore.position.pixels ==
+        scrollControllerTopScore.position.maxScrollExtent) {
+      if (isLoadingTopScore == true) {
+        if (limitTopScore < 100) {
+          limitTopScore += 10;
+        }
+        getTopScore();
+      }
+    }
   }
 }

@@ -2,13 +2,11 @@ import 'dart:convert';
 
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 class StadingResponse {
-  Filters? filters;
   Area? area;
   Competition? competition;
   Season? season;
   List<Standings>? standings;
   StadingResponse({
-    this.filters,
     this.area,
     this.competition,
     this.season,
@@ -17,7 +15,6 @@ class StadingResponse {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'filters': filters?.toMap(),
       'area': area?.toMap(),
       'competition': competition?.toMap(),
       'season': season?.toMap(),
@@ -27,9 +24,6 @@ class StadingResponse {
 
   factory StadingResponse.fromMap(Map<String, dynamic> map) {
     return StadingResponse(
-      filters: map['filters'] != null
-          ? Filters.fromMap(map['filters'] as Map<String, dynamic>)
-          : null,
       area: map['area'] != null
           ? Area.fromMap(map['area'] as Map<String, dynamic>)
           : null,
