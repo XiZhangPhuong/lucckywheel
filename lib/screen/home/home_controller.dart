@@ -10,12 +10,10 @@ import 'package:luckywheel/model/football/team_responsee.dart';
 import 'package:luckywheel/model/football/top_score_response.dart';
 import 'package:luckywheel/model/football/video_response.dart';
 import 'package:luckywheel/repository/footballl_repository.dart';
-import 'package:luckywheel/repository/video_repository.dart';
 import 'package:luckywheel/routes/routes_path/home_routes.dart';
 import 'package:luckywheel/shares/shared_preference_helper.dart';
 
 class HomeController extends GetxController {
-  final VideoRepository _videoRepository = VideoRepository();
   List<dynamic> listVideo = [];
   CompetitionsResponse compertitionResponse = CompetitionsResponse();
   VideoResponse videoResponse = VideoResponse();
@@ -250,19 +248,6 @@ class HomeController extends GetxController {
     }
   }
 
-  ///
-  /// get video
-  ///
-  Future<void> getVideo() async {
-    await _videoRepository.getVideo(onError: (e) {
-      print(e);
-    }, onSuccess: (data) {
-      videoResponse = data;
-      print(videoResponse.toMap());
-      isLoading = true;
-      update();
-    });
-  }
 
   ///
   /// go to videp
