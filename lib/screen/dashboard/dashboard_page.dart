@@ -4,8 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:luckywheel/screen/dashboard/dashboard_controller.dart';
 import 'package:luckywheel/screen/football/football_page.dart';
 import 'package:luckywheel/screen/home/home_page.dart';
-import 'package:luckywheel/screen/nasa/nasa_page.dart';
-import 'package:luckywheel/screen/nation/nation_page.dart';
 import 'package:luckywheel/util/color_resources.dart';
 
 class DashBoardPage extends GetView<DashBoardController> {
