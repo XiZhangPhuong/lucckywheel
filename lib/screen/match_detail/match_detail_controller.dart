@@ -68,8 +68,8 @@ class MatchDetailController extends GetxController {
   ///
   /// get h2h
   ///
-  void getH2H(){
-    _foodBallRespository.getH2H(id: id, onSuccess: (data) {
+  Future<void> getH2H() async {
+   await _foodBallRespository.getH2H(id: id, onSuccess: (data) {
         dataH2h = data;
         isLoadingH2H = true;
         print(data);
