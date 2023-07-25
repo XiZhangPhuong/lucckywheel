@@ -152,74 +152,6 @@ class TeamPage extends GetView<TeamController> {
   }
 }
 
-///
-/// custom appbar
-///
-Widget _customAppBar(TeamController controller) {
-  return Container(
-    height: 200,
-    color: Colors.white,
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            IconButton(
-              onPressed: () {},
-              icon: Icon(
-                Icons.arrow_back,
-                color: Colors.white,
-              ),
-            ),
-            IconButton(
-              onPressed: () {},
-              icon: Icon(
-                Icons.search_off,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
-        SizedBox(
-          height: 5,
-        ),
-        ListTile(
-          leading: Image.network(
-            'https://crests.football-data.org/65.png',
-            height: 100,
-            width: 100,
-          ),
-          title: Text(
-            'Mancity',
-            style: GoogleFonts.nunito(
-              color: ColorResources.BACKGROUND,
-              fontSize: 18,
-            ),
-          ),
-          subtitle: Text('ManCity.com'),
-        ),
-        SizedBox(
-          height: 5,
-        ),
-        Row(
-          children: [
-            Temp.processImage1(
-              imageUrl: 'https://crests.football-data.org/770.svg',
-              height: 15,
-              widght: 15,
-              onLoading: CircularProgressIndicator(),
-            ),
-            SizedBox(
-              width: 5,
-            ),
-            Text('Anh'),
-          ],
-        )
-      ],
-    ),
-  );
-}
 
 ///
 /// doi hinh
@@ -343,21 +275,19 @@ Widget _forMation(TeamController controller) {
 ///
 Widget _itemContainer({required String name, required String nation}) {
   return Container(
+    width: Get.width,
     padding: EdgeInsets.all(10.0),
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(5),
       border: Border.all(width: 0.7, color: Colors.white70),
     ),
-    child: Row(
-      children: [
-        Text(
-          '${name} | Quốc tịch : ${nation}',
-          style: GoogleFonts.nunito(
-            color: Colors.white,
-            fontSize: 14,
-          ),
-        ),
-      ],
+    child: Text(
+      '${name} | Quốc tịch : ${nation}',
+      style: GoogleFonts.nunito(
+        color: Colors.white,
+        fontSize: 14,
+      ),
+      overflow: TextOverflow.ellipsis,
     ),
   );
 }

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:luckywheel/model/football/cacgiaidau_response.dart';
 import 'package:luckywheel/model/football/competitions_response.dart';
+import 'package:luckywheel/model/football/match_detail_response.dart';
 import 'package:luckywheel/model/football/stading_response.dart';
 import 'package:luckywheel/model/football/team_responsee.dart';
 import 'package:luckywheel/model/football/top_score_response.dart';
@@ -118,5 +119,43 @@ class FoodBallRespository {
      }catch(e){
        onError(e);
      }
+  }
+
+  ///
+  /// get chi tiết trận đấu by id
+  ///
+  Future<void> getMatchDetail({
+    required int id,
+    required Function(MatchDetailResponse data) onSuccess,
+    required Function(dynamic e) onError
+  }) async {
+    try{
+       final response = await dio.get('https://api.football-data.org/v4/matches/${id}',options: options);
+       if(response.statusCode==200){
+         final resuilt = response.data as dynamic;
+         onSuccess(MatchDetailResponse.fromMap(resuilt));
+       }
+    }catch(e){
+      onError(e);
+    }
+  }
+
+  ///
+  /// get những trận đấu 2 đội từng gặp nhau
+  ///
+  Future<void> getH2H({
+    required int id,
+    required Function(dynamic data) onSuccess,
+    required Function(dynamic e) onError,
+    
+  }) async {
+    try{
+      final response = await dio.get('http://api.football-data.org/v4/matches/${id}/head2head',options: options);
+      if(response.statusCode==200){
+        onSuccess(response.data);
+      }
+    }catch(e){
+      onError(e);
+    }
   }
 }

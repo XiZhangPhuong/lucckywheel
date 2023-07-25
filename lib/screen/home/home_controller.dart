@@ -349,6 +349,12 @@ class HomeController extends GetxController {
   }
 
   ///
+  /// go to match detail
+  ///
+  void gotoMatchDetail(int id){
+    Get.toNamed(HomeRoutes.MATCH_DETAIL,arguments:  id);
+  }
+  ///
   /// lắng nghe sự kiện cuộn top bàn thắng
   ///
   void _scrollListener() {

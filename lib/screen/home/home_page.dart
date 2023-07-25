@@ -152,6 +152,7 @@ Widget _scheDuLe(HomeController controller) {
         return GestureDetector(
           onTap: () {
             print(item.id);
+            controller.gotoMatchDetail(item.id!);
           },
           child: Container(
             padding: EdgeInsets.all(10.0),
