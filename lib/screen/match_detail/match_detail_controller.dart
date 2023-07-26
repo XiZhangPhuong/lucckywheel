@@ -37,11 +37,13 @@ class MatchDetailController extends GetxController {
   ///
   void initVideoPlayer(){
    try{
-     videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(urlVideo))..initialize();
+     videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(urlVideo))..initialize(
+     );
      videoPlayerController!.play();
     print(videoPlayerController!.dataSource);
     videoPlayerController!.setLooping(true);
     update();
+ 
    }catch(e){
     print(e);
    }

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:luckywheel/base/loading.dart';
+import 'package:luckywheel/helper/validate.dart';
 import 'package:luckywheel/model/football/cacgiaidau_response.dart';
 import 'package:luckywheel/model/football/competitions_response.dart';
 import 'package:luckywheel/model/football/stading_response.dart';
@@ -12,6 +14,8 @@ import 'package:luckywheel/model/football/video_response.dart';
 import 'package:luckywheel/repository/footballl_repository.dart';
 import 'package:luckywheel/routes/routes_path/home_routes.dart';
 import 'package:luckywheel/shares/shared_preference_helper.dart';
+import 'package:luckywheel/temp.dart';
+import 'package:luckywheel/util/color_resources.dart';
 
 class HomeController extends GetxController {
   List<dynamic> listVideo = [];
@@ -37,70 +41,37 @@ class HomeController extends GetxController {
   int limitTopScore = 20;
   // bắt sự kiện cuộn Top bàn thắng
   ScrollController scrollControllerTopScore = ScrollController();
-  List<Map<String, dynamic>> dataList = [
-    {
-      'url': 'https://flagcdn.com/w320/vn.png',
-      'title': 'VietNam',
-    },
-    {
-      'url': 'https://flagcdn.com/w320/us.png',
-      'title': 'USA',
-    },
-    {
-      'url': 'https://flagcdn.com/w320/kr.png',
-      'title': 'Korea',
-    },
-    {
-      'url': 'https://flagcdn.com/w320/cn.png',
-      'title': 'China',
-    },
-    {
-      'url': 'https://flagcdn.com/w320/jp.png',
-      'title': 'Japan',
-    },
-    {
-      'url': 'https://flagcdn.com/w320/in.png',
-      'title': 'India',
-    },
-    {
-      'url': 'https://flagcdn.com/w320/es.png',
-      'title': 'Spain',
-    },
-    {
-      'url': 'https://flagcdn.com/w320/it.png',
-      'title': 'Italy',
-    },
-    {
-      'url': 'https://flagcdn.com/w320/ru.png',
-      'title': 'Russia',
-    },
-  ];
+  // bắt sự kiện cuộn lịch thi đấu
+  ScrollController scrollControllerScheDule = ScrollController();
+  // list các đội vô địch theo mùa
+  bool isLoadingChampion = false;
+  List<dynamic> listChamion = [];
 
-  List<Map<String, dynamic>> listMenu = [
-    {
-      'image':
-          'https://apod.nasa.gov/apod/image/2307/DracoTrio_TeamOmicron1024.jpg',
-      'title': 'Apod'
-    },
-    {
-      'image':
-          'https://static.vecteezy.com/system/resources/previews/005/869/422/non_2x/human-overpopulation-chalk-rgb-color-concept-icon-birth-rate-increase-international-population-ecological-footprint-society-idea-isolated-chalkboard-illustration-on-black-background-free-vector.jpg',
-      'title': 'Polulation'
-    },
-    {
-      'image': '',
-      'title': 'Language',
-    }
-  ];
+  // list team
+  bool isLoadingTeam = false;
+  dynamic dataTeam = [];
+  int currentIndexTeam = 0;
+  // logo Doi Bong
+  String? logo = '';
+
+  // list schdule by team
+  bool isLoadingScheduleByTeam = false;
+  dynamic dataScheDuleByteam = [];
+  int idTeam = 0;
+  String teamName = '';
+  // select ...
   int selectTed = 0;
   @override
   void onInit() {
     super.onInit();
     scrollControllerTopScore.addListener(_scrollListener);
+    _scrollListenerScheDule();
     initListYear();
     getAll();
     getStanDing();
     getTopScore();
+    getChampion();
+    getTeam();
   }
 
   @override
@@ -248,7 +219,6 @@ class HomeController extends GetxController {
     }
   }
 
-
   ///
   /// go to videp
   ///
@@ -342,6 +312,23 @@ class HomeController extends GetxController {
   }
 
   ///
+  /// lấy các đội vô địch theo mùa
+  ///
+  Future<void> getChampion() async {
+    await _foodBallRespository.getChampion(
+      onSuccess: (data) {
+        listChamion = data;
+        isLoadingChampion = true;
+        update();
+      },
+      onError: (e) {
+        isLoadingChampion = false;
+        print(e);
+      },
+    );
+  }
+
+  ///
   /// go to team page
   ///
   void gotoTeamPage(int sent) {
@@ -351,9 +338,10 @@ class HomeController extends GetxController {
   ///
   /// go to match detail
   ///
-  void gotoMatchDetail(int id){
-    Get.toNamed(HomeRoutes.MATCH_DETAIL,arguments:  id);
+  void gotoMatchDetail(int id) {
+    Get.toNamed(HomeRoutes.MATCH_DETAIL, arguments: id);
   }
+
   ///
   /// lắng nghe sự kiện cuộn top bàn thắng
   ///
@@ -367,5 +355,254 @@ class HomeController extends GetxController {
         getTopScore();
       }
     }
+  }
+
+  ///
+  /// lắng nghe cuộn lịch thi đấu theo ngày hiện tại
+  ///
+  void _scrollListenerScheDule() {
+    scrollControllerScheDule.addListener(() {
+      // for(int i = 0;i<compertitionResponse.matches!.length;i++){
+      //   if(Temp.convertUtcToVietnamTime(compertitionResponse.matches![i].utcDate!)=='20:00-20/08'){
+      //     scrollControllerScheDule.jumpTo(i*80);
+      //     break;
+      //   }
+      // }
+      scrollControllerScheDule
+          .jumpTo(scrollControllerScheDule.position.maxScrollExtent);
+      update();
+    });
+  }
+
+  ///
+  /// get team
+  ///
+  Future<void> getTeam() async {
+    await _foodBallRespository.getTeam(
+      season: currentYear,
+      onSuccess: (data) {
+        dataTeam = data;
+        print(data);
+        isLoadingTeam = true;
+        update();
+      },
+      onError: (e) {
+        print(e);
+        isLoadingTeam = false;
+      },
+    );
+  }
+
+  ///
+  /// click bottom sheeet
+  ///
+  void clickBottomSheet(int index) {
+    currentIndexTeam = index;
+    update();
+  }
+
+  ///
+  /// lấy lịch thi đấu của 1 đội tuyển trong 1 mùa giải
+  ///
+  Future<void> getScheDuleyTeam() async {
+    await _foodBallRespository.getScheDuleByTeam(
+      idTeam: idTeam,
+      season: currentYear,
+      onSuccess: (data) {
+        dataScheDuleByteam = data;
+        isLoadingScheduleByTeam = true;
+        update();
+      },
+      onError: (e) {
+        print(e);
+      },
+    );
+  }
+
+  ///
+  /// show bottom sheet get team
+  ///
+  void showBottomSheetGetTeam() {
+    Get.bottomSheet(
+      backgroundColor: ColorResources.BACKGROUND,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(10.0),
+          topRight: Radius.circular(10.0),
+        ),
+      ),
+      Container(
+        padding: EdgeInsets.all(5.0),
+        height: Get.height * 0.8,
+        child: Column(
+          children: [
+            // SizedBox(
+            //   height: 8,
+            // ),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'Chọn câu lạc bộ',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.nunito(
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    Get.back();
+                  },
+                  icon: Icon(
+                    Icons.close,
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                ),
+              ],
+            ),
+            Divider(
+              color: Colors.black87,
+            ),
+            ListTile(
+              onTap: () {
+                logo = '';
+                idTeam = 0;
+                Get.back();
+                update();
+              },
+              leading: ClipRRect(
+                borderRadius: BorderRadius.circular(3),
+                child: SvgPicture.network(
+                  'https://crests.football-data.org/770.svg',
+                  height: 18,
+                  width: 18,
+                ),
+              ),
+              title: Text(
+                'Tất cả câu lạc bộ',
+                style: GoogleFonts.nunito(
+                  fontSize: Validate.nullOrEmpty(logo) ? 18 : 14,
+                  color: Validate.nullOrEmpty(logo)
+                      ? ColorResources.MAIN
+                      : Colors.white,
+                ),
+              ),
+            ),
+
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: List.generate(20, (index) {
+                    final item = dataTeam['teams'][index];
+                    return ListTile(
+                      onTap: () {
+                        clickBottomSheet(index);
+                        logo = item['crest'].toString();
+                        teamName = item['shortName'].toString();
+                        idTeam = item['id'] as int;
+                        getScheDuleyTeam();
+                        Get.back();
+                        update();
+                      },
+                      leading: Temp.processImage1(
+                        imageUrl: item['crest'].toString(),
+                        height: 30,
+                        widght: 30,
+                      ),
+                      title: Text(
+                        item['shortName'].toString(),
+                        style: GoogleFonts.nunito(
+                          fontSize: Validate.nullOrEmpty(logo)
+                              ? 14
+                              : index == currentIndexTeam
+                                  ? 18
+                                  : 14,
+                          color: Validate.nullOrEmpty(logo)
+                              ? Colors.white
+                              : index == currentIndexTeam
+                                  ? ColorResources.MAIN
+                                  : Colors.white,
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  ///
+  /// Colors borderAll ListView
+  ///
+  Color colorBorderListView({required String utcDay}) {
+    List<String> listTime = utcDay.split("-");
+    int day = DateTime.now().day;
+    int month = DateTime.now().month;   
+    if (listTime.last =='${day}/${month}') {
+      return Colors.blue;
+    }
+    return Colors.white;
+  }
+
+  ///
+  ///
+  ///
+  Widget notifiOrText(
+      {required String status,
+      required String finished,
+      required String utcDate}) {
+    if (status == 'FINISHED') {
+      return Text(
+        finished,
+        style: GoogleFonts.nunito(
+          color: Colors.white,
+          fontSize: 22,
+        ),
+      );
+    }
+    DateTime convertedDate =
+        DateFormat('HH:mm-dd/MM').parse(Temp.convertUtcToVietnamTime(utcDate));
+    DateTime targetDate = DateFormat('HH:mm-dd/MM').parse(DateFormat('HH:mm-dd/MM').format(DateTime.now()));
+    if (convertedDate.isBefore(targetDate)) {
+      return Container(
+        margin: EdgeInsets.only(top: 5.0),
+        child: Text(
+          'Sắp diễn ra',
+          style: GoogleFonts.nunito(
+            color: Colors.blue,
+            fontSize: 16,
+          ),
+        ),
+      );
+    } else if (convertedDate.day == targetDate.day &&
+           convertedDate.month == targetDate.month &&
+           convertedDate.year == targetDate.year) {
+      return Container(
+        margin: EdgeInsets.only(top: 5.0),
+        child: Text(
+          'Trực tiếp',
+          style: GoogleFonts.nunito(
+            color: Colors.red,
+            fontSize: 16,
+          ),
+        ),
+      );
+    }
+    return IconButton(
+      onPressed: () {},
+      icon: Icon(
+        Icons.notifications_none,
+        color: Colors.white,
+        size: 30,
+      ),
+    );
   }
 }

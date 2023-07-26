@@ -496,7 +496,7 @@ Widget _tabH2H(MatchDetailController controller) {
             crossAxisAlignment: CrossAxisAlignment.start,
             
             children: [
-               // số trận thắng
+               // số bàn thắng
                Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                  children: [
@@ -504,7 +504,7 @@ Widget _tabH2H(MatchDetailController controller) {
                     color: Colors.blue,
                     fontSize: 14,
                    ),),
-                   Text('Số trận thắng',style: GoogleFonts.nunito(
+                   Text('Số bàn thắng',style: GoogleFonts.nunito(
                     color: Colors.white,
                     fontSize: 14,
                    ),),

@@ -94,7 +94,6 @@ class FoodBallRespository {
       );
       if(response.statusCode==200){
         final resuilt = response.data['scorers'] as List<dynamic>;
-        print(resuilt);
         onSuccess(resuilt.map((e) => TopScoreResponse.fromMap(e)).toList());
       }
     }catch(e){
@@ -158,4 +157,59 @@ class FoodBallRespository {
       onError(e);
     }
   }
+
+  ///
+  /// get cac đội vô địch theo mùa
+  ///
+  Future<void> getChampion({
+    required Function(List<dynamic> data) onSuccess,
+    required Function(dynamic e) onError,
+  }) async {
+    try{
+      final response  = await dio.get('https://api.football-data.org/v4/competitions/PL',options: options);
+      if(response.statusCode==200){
+        onSuccess(response.data['seasons']);
+      }
+    }catch(e){
+       onError(e);
+    }
+  }
+
+  ///
+  /// liệt kê các đội tuyển trong mùa giải
+  ///
+  Future<void> getTeam({
+    required int season,
+    required Function(dynamic data) onSuccess,
+    required Function(dynamic e) onError,
+  }) async {
+    try{
+      final response = await dio.get('http://api.football-data.org/v4/competitions/PL/teams?season=${season}',options: options);
+      if(response.statusCode==200){
+        onSuccess(response.data);
+      }
+    }catch(e){
+      onError(e);
+    }
+  }
+
+  ///
+  /// lấy lịch thi đấu của 1 đội tuyển 
+  ///
+  Future<void> getScheDuleByTeam({
+    required int idTeam,
+    required int season,
+    required Function(dynamic data) onSuccess,
+    required Function(dynamic e) onError,
+  }) async {
+     try{
+       final response = await dio.get('https://api.football-data.org/v4/teams/${idTeam}/matches?season=${season}',options: options);
+       if(response.statusCode==200){
+         onSuccess(response.data);
+       }
+     }catch(e){
+       onError(e);
+     }
+  }
+
 }

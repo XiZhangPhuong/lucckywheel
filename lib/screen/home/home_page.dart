@@ -1,6 +1,7 @@
 import 'package:contained_tab_bar_view/contained_tab_bar_view.dart';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:luckywheel/base/loading.dart';
@@ -71,11 +72,23 @@ class HomePage extends GetView<HomeController> {
                           ),
                         ),
                       ),
+                      Container(
+                        width: Get.width / 3,
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Đội vô địch',
+                          style: GoogleFonts.nunito(
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
                     ],
                     views: [
                       _scheDuLe(controller),
                       _bangXepHang(controller),
                       _topScore(controller),
+                      _doiVoDich(controller),
                     ],
                   ),
                 ),
@@ -91,7 +104,9 @@ class HomePage extends GetView<HomeController> {
     return AppBar(
       backgroundColor: ColorResources.BACKGROUND,
       title: Text(
-        '${controller.compertitionResponse.competition!.name!} ${controller.currentYear}',
+        Validate.nullOrEmpty(controller.teamName)
+            ? '${controller.compertitionResponse.competition!.name!} ${controller.currentYear}'
+            : '${controller.teamName} ${controller.currentYear}',
         style: GoogleFonts.nunito(
           color: Colors.white,
           fontSize: 18,
@@ -102,13 +117,28 @@ class HomePage extends GetView<HomeController> {
         fit: BoxFit.cover,
       ),
       actions: [
-        //_searchVongDau(controller),
-        IconButton(
-          onPressed: () {},
-          icon: Icon(
-            Icons.notifications_none,
-            color: Colors.white,
-          ),
+        GestureDetector(
+          onTap: () {
+            controller.showBottomSheetGetTeam();
+          },
+          child: Validate.nullOrEmpty(controller.logo)
+              ? SvgPicture.network(
+                  'https://crests.football-data.org/770.svg',
+                  height: 18,
+                  width: 18,
+                )
+              : ClipRRect(
+                  borderRadius: BorderRadius.circular(3.0),
+                  child: Temp.processImage1(
+                    imageUrl: controller.logo,
+                    height: 30,
+                    widght: 30,
+                    onLoading: Container(
+                      height: 30,
+                      width: 30,
+                    ),
+                  ),
+                ),
         ),
         // popumenu button
         PopupMenuButton(
@@ -144,101 +174,203 @@ class HomePage extends GetView<HomeController> {
 Widget _scheDuLe(HomeController controller) {
   return Container(
     padding: EdgeInsets.only(top: 10),
-    child: ListView .builder(
-      shrinkWrap: true,
-      itemCount: controller.compertitionResponse.matches!.length,
-      itemBuilder: (context, index) {
-        final item = controller.compertitionResponse.matches![index];
-        return GestureDetector(
-          onTap: () {
-            print(item.id);
-            controller.gotoMatchDetail(item.id!);
-          },
-          child: Container(
-            padding: EdgeInsets.all(10.0),
-            margin: EdgeInsets.only(bottom: 10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(7.0),
-              border: Border.all(width: 1, color: Colors.white70),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    children: [
-                      controller.processImage1(
-                        imageUrl: item.homeTeam!.crest!,
-                      ),
-                      SizedBox(
-                        height: 5.0,
-                      ),
-                      Text(
-                        item.homeTeam!.shortName!,
-                        style: GoogleFonts.nunito(
-                          fontSize: 14,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Column(
-                    children: [
-                      Text(
-                        Temp.convertUtcToVietnamTime(
-                          item.utcDate!,
-                        ),
-                        style: GoogleFonts.nunito(
-                          fontSize: 14,
-                          color: Colors.white,
-                        ),
-                      ),
-                      item.status == "FINISHED"
-                          ? Text(
-                              '${item.score!.fullTime!.home} : ${item.score!.fullTime!.away!}',
-                              style: GoogleFonts.nunito(
-                                fontSize: 22,
-                                color: Colors.white,
-                              ),
-                            )
-                          : IconButton(
-                              onPressed: () {},
-                              icon: Icon(
-                                Icons.notifications_none,
-                                color: Colors.white,
-                                size: 30,
-                              ),
-                            ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Column(
-                    children: [
-                      controller.processImage1(
-                        imageUrl: item.awayTeam!.crest!,
-                      ),
-                      SizedBox(
-                        height: 5.0,
-                      ),
-                      Text(
-                        item.awayTeam!.shortName!,
-                        style: GoogleFonts.nunito(
-                          fontSize: 14,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+    child: Validate.nullOrEmpty(controller.logo)
+        ? _listViewFullScheDule(controller)
+        : _listViewFullScheDuleByTeam(controller),
+  );
+}
+
+///
+/// lịch sử đấu toàn bộ của Ngoại Hạng Anh
+///
+Widget _listViewFullScheDule(HomeController controller) {
+  return ListView.builder(
+    //controller: controller.scrollControllerScheDule,
+    shrinkWrap: true,
+    itemCount: controller.compertitionResponse.matches!.length,
+    itemBuilder: (context, index) {
+      final item = controller.compertitionResponse.matches![index];
+      return GestureDetector(
+        onTap: () {
+          print(item.id);
+          controller.gotoMatchDetail(item.id!);
+        },
+        child: Container(
+          padding: EdgeInsets.all(10.0),
+          margin: EdgeInsets.only(bottom: 10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(7.0),
+            border: Border.all(
+              width: 1,
+              color: controller.colorBorderListView(
+                utcDay: Temp.convertUtcToVietnamTime(item.utcDate!),
+              ),
             ),
           ),
-        );
-      },
-    ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  children: [
+                    controller.processImage1(
+                      imageUrl: item.homeTeam!.crest!,
+                    ),
+                    SizedBox(
+                      height: 5.0,
+                    ),
+                    Text(
+                      item.homeTeam!.shortName!,
+                      style: GoogleFonts.nunito(
+                        fontSize: 14,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  children: [
+                    Text(
+                      Temp.convertUtcToVietnamTime(
+                        item.utcDate!,
+                      ),
+                      style: GoogleFonts.nunito(
+                        fontSize: 14,
+                        color: Colors.white,
+                      ),
+                    ),
+                    controller.notifiOrText(
+                        status: item.status!,
+                        finished: Validate.nullOrEmpty(
+                                item.score!.fullTime!.home)
+                            ? ''
+                            : '${item.score!.fullTime!.home} : ${item.score!.fullTime!.away!}',
+                        utcDate: item.utcDate!),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  children: [
+                    controller.processImage1(
+                      imageUrl: item.awayTeam!.crest!,
+                    ),
+                    SizedBox(
+                      height: 5.0,
+                    ),
+                    Text(
+                      item.awayTeam!.shortName!,
+                      style: GoogleFonts.nunito(
+                        fontSize: 14,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
   );
+}
+
+///
+/// listview lịch thi đấu Ngoại Hạng Anh lọc theo đội tuyển
+///
+Widget _listViewFullScheDuleByTeam(HomeController controller) {
+  return controller.isLoadingScheduleByTeam == false
+      ? LoadingIndicator()
+      : ListView.builder(
+          shrinkWrap: true,
+          itemCount: controller.dataScheDuleByteam['resultSet']['count'],
+          itemBuilder: (context, index) {
+            final item = controller.dataScheDuleByteam['matches'][index];
+            return GestureDetector(
+              onTap: () {
+                print(item['id']);
+                controller.gotoMatchDetail(item['id']);
+              },
+              child: Container(
+                padding: EdgeInsets.all(10.0),
+                margin: EdgeInsets.only(bottom: 10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(7.0),
+                  border: Border.all(
+                      width: 1,
+                      color: controller.colorBorderListView(
+                          utcDay: item['utcDate']),),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        children: [
+                          controller.processImage1(
+                            imageUrl: item['homeTeam']['crest'].toString(),
+                          ),
+                          SizedBox(
+                            height: 5.0,
+                          ),
+                          Text(
+                            item['homeTeam']['shortName'].toString(),
+                            style: GoogleFonts.nunito(
+                              fontSize: 14,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Text(
+                            Temp.convertUtcToVietnamTime(
+                              item['utcDate'].toString(),
+                            ),
+                            style: GoogleFonts.nunito(
+                              fontSize: 14,
+                              color: Colors.white,
+                            ),
+                          ),
+                          controller.notifiOrText(
+                              status: item['status'],
+                              finished: Validate.nullOrEmpty(
+                                      item['score']['fullTime']['home'])
+                                  ? ''
+                                  : '${item['score']['fullTime']['home']} : ${item['score']['fullTime']['away']}',
+                              utcDate: item['utcDate']),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          controller.processImage1(
+                            imageUrl: item['awayTeam']['crest'].toString(),
+                          ),
+                          SizedBox(
+                            height: 5.0,
+                          ),
+                          Text(
+                            item['awayTeam']['shortName'].toString(),
+                            style: GoogleFonts.nunito(
+                              fontSize: 14,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
 }
 
 ///
@@ -513,38 +645,288 @@ Widget _topScore(HomeController controller) {
     rows.add(row);
   }
 
-  return controller.isLoadingTopScore == false 
-      ? LoadingIndicator() 
+  return controller.isLoadingTopScore == false
+      ? LoadingIndicator()
+      : controller.listTopScore.isEmpty
+          ? Center(
+              child: Text(
+                'Chưa có dữ liệu',
+                style: GoogleFonts.nunito(
+                  color: Colors.white,
+                  fontSize: 16,
+                ),
+              ),
+            )
+          : Container(
+              child: DataTable2(
+                // scrollController: controller.scrollControllerTopScore,
+                columns: [
+                  // Các cột của DataTable
+                  DataColumn2(
+                      label: Text(
+                        ' ',
+                        style: GoogleFonts.nunito(
+                          color: Colors.white,
+                          fontSize: 14,
+                        ),
+                      ),
+                      size: ColumnSize.M),
+                  DataColumn2(
+                    label: GestureDetector(
+                      onTap: () {
+                        controller.limitTopScore += 10;
+                        controller.getTopScore();
+                      },
+                      child: Text(
+                        'Cầu thủ',
+                        style: GoogleFonts.nunito(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                    size: ColumnSize.L,
+                    fixedWidth: 100,
+                  ),
+                  DataColumn2(
+                    label: Text(
+                      'Câu lạc bộ',
+                      style: GoogleFonts.nunito(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+                    size: ColumnSize.L,
+                    fixedWidth: 130,
+                  ),
+                  DataColumn2(
+                    label: Text(
+                      'G',
+                      style: GoogleFonts.nunito(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+                    size: ColumnSize.M,
+                  ),
+                  DataColumn2(
+                      label: Text(
+                        'A',
+                        style: GoogleFonts.nunito(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                      ),
+                      size: ColumnSize.M),
+                  DataColumn2(
+                      label: Text(
+                        'P',
+                        style: GoogleFonts.nunito(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                      ),
+                      size: ColumnSize.M),
+                ],
+                rows: rows,
+                columnSpacing: 8,
+                horizontalMargin: 0,
+              ),
+            );
+}
+
+///
+/// đội vô địch theo mùa
+///
+Widget _doiVoDichTheoMua(HomeController controller) {
+  return Container(
+    padding: EdgeInsets.all(10.0),
+    child: Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Text(
+              'Mùa giải',
+              style: GoogleFonts.nunito(
+                color: Colors.white,
+                fontSize: 16,
+              ),
+            ),
+            Text(
+              'Câu lạc bộ',
+              style: GoogleFonts.nunito(
+                color: Colors.white,
+                fontSize: 16,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(
+          height: 15,
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              children: List.generate(
+                controller.listChamion.length,
+                (index) => Validate.nullOrEmpty(
+                        controller.listChamion[index]['winner'])
+                    ? Container()
+                    : Column(
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  '${controller.listChamion[index]['startDate']}' +
+                                      '\n' +
+                                      '${controller.listChamion[index]['endDate']}',
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.nunito(
+                                    fontSize: 14,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  child: Row(
+                                    children: [
+                                      controller.processImage1(
+                                          imageUrl: controller
+                                              .listChamion[index]['winner']
+                                                  ['crest']
+                                              .toString(),
+                                          height: 30,
+                                          widght: 30),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
+                                      Text(
+                                        controller.listChamion[index]['winner']
+                                            ['shortName'],
+                                        style: GoogleFonts.nunito(
+                                          fontSize: 14,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Divider(),
+                        ],
+                      ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+///
+/// đội vô địch theo mùa
+///
+Widget _doiVoDich(HomeController controller) {
+  List<DataRow> rows = [];
+  for (int i = 0; i < controller.listChamion.length; i++) {
+    final item = controller.listChamion[i];
+    bool checkWinner = Validate.nullOrEmpty(item['winner']);
+    DataRow row = DataRow(cells: [
+      DataCell(
+        Text(
+          '${controller.listChamion[i]['startDate']}',
+          textAlign: TextAlign.center,
+          style: GoogleFonts.nunito(
+            fontSize: 14,
+            color: Colors.white,
+          ),
+        ),
+      ),
+      DataCell(
+        Row(
+          children: [
+            Flexible(
+              child: checkWinner
+                  ? Container(
+                      height: 30,
+                      width: 30,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white70,
+                      ),
+                      child: Image.network(
+                        controller.compertitionResponse.competition!.emblem!,
+                        height: 30,
+                        width: 30,
+                      ),
+                    )
+                  : controller.processImage1(
+                      imageUrl: controller.listChamion[i]['winner']['crest'],
+                      height: 30,
+                      widght: 30),
+            ),
+            SizedBox(
+              width: 5.0,
+            ),
+            Text(
+              checkWinner
+                  ? 'No data'
+                  : controller.listChamion[i]['winner']['shortName'],
+              style: GoogleFonts.nunito(
+                fontSize: 14,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+      DataCell(
+        Row(
+          children: [
+            Icon(
+              Icons.lightbulb,
+              color: Colors.white,
+            ),
+            Text(
+              checkWinner
+                  ? '.......'
+                  : controller.listChamion[i]['winner']['founded'].toString(),
+              textAlign: TextAlign.center,
+              style: GoogleFonts.nunito(
+                fontSize: 14,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+    ]);
+    rows.add(row);
+  }
+
+  return controller.isLoadingChampion == false
+      ? LoadingIndicator()
       : Container(
           child: DataTable2(
-            scrollController: controller.scrollControllerTopScore,
             columns: [
               // Các cột của DataTable
               DataColumn2(
-                  label: Text(
-                    ' ',
-                    style: GoogleFonts.nunito(
-                      color: Colors.white,
-                      fontSize: 14,
-                    ),
-                  ),
-                  size: ColumnSize.M),
-              DataColumn2(
-                label: GestureDetector(
-                  onTap: () {
-                    controller.limitTopScore += 10;
-                    controller.getTopScore();
-                  },
-                  child: Text(
-                    'Cầu thủ',
-                    style: GoogleFonts.nunito(
-                      color: Colors.white,
-                      fontSize: 16,
-                    ),
+                label: Text(
+                  'Mùa giải',
+                  style: GoogleFonts.nunito(
+                    color: Colors.white,
+                    fontSize: 16,
                   ),
                 ),
-                size: ColumnSize.L,
-                fixedWidth: 100,
+                size: ColumnSize.M,
+                // fixedWidth: Get.width/2,
               ),
               DataColumn2(
                 label: Text(
@@ -555,36 +937,19 @@ Widget _topScore(HomeController controller) {
                   ),
                 ),
                 size: ColumnSize.L,
-                fixedWidth: 130,
+                // fixedWidth: Get.width/2,
               ),
               DataColumn2(
                 label: Text(
-                  'G',
+                  'Thành lập',
                   style: GoogleFonts.nunito(
                     color: Colors.white,
                     fontSize: 16,
                   ),
                 ),
                 size: ColumnSize.M,
+                // fixedWidth: Get.width/2,
               ),
-              DataColumn2(
-                  label: Text(
-                    'A',
-                    style: GoogleFonts.nunito(
-                      color: Colors.white,
-                      fontSize: 16,
-                    ),
-                  ),
-                  size: ColumnSize.M),
-              DataColumn2(
-                  label: Text(
-                    'P',
-                    style: GoogleFonts.nunito(
-                      color: Colors.white,
-                      fontSize: 16,
-                    ),
-                  ),
-                  size: ColumnSize.M),
             ],
             rows: rows,
             columnSpacing: 8,
@@ -597,5 +962,7 @@ Widget _topScore(HomeController controller) {
 /// thông báo hoặc tỉ số
 ///
 Widget _thongBaoHoacTiSo() {
-  return Container();
+  return Container(
+    padding: EdgeInsets.all(10.0),
+  );
 }
