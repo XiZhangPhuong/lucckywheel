@@ -16,6 +16,7 @@ import 'package:luckywheel/routes/routes_path/home_routes.dart';
 import 'package:luckywheel/shares/shared_preference_helper.dart';
 import 'package:luckywheel/temp.dart';
 import 'package:luckywheel/util/color_resources.dart';
+import 'package:scroll_to_index/scroll_to_index.dart';
 
 class HomeController extends GetxController {
   List<dynamic> listVideo = [];
@@ -43,10 +44,13 @@ class HomeController extends GetxController {
   ScrollController scrollControllerTopScore = ScrollController();
   // bắt sự kiện cuộn lịch thi đấu
   ScrollController scrollControllerScheDule = ScrollController();
+  final scrollDirection = Axis.vertical;
+  AutoScrollController? scrollControllerSchedule  ;
+
   // list các đội vô địch theo mùa
   bool isLoadingChampion = false;
   List<dynamic> listChamion = [];
-
+  
   // list team
   bool isLoadingTeam = false;
   dynamic dataTeam = [];
@@ -65,7 +69,7 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     scrollControllerTopScore.addListener(_scrollListener);
-    _scrollListenerScheDule();
+   // scrollControllerScheDule.addListener(_scrollListenerScheDule);
     initListYear();
     getAll();
     getStanDing();
@@ -80,6 +84,10 @@ class HomeController extends GetxController {
       _scrollListener();
     });
     scrollControllerTopScore.dispose();
+    scrollControllerScheDule.removeListener(() {
+     
+    });
+    scrollControllerScheDule.dispose();
     super.onClose();
   }
 
@@ -102,14 +110,18 @@ class HomeController extends GetxController {
     isLoadingScheDule = false;
     isLoadingStanding = false;
     isLoadingTopScore = false;
+    isLoadingScheduleByTeam = false;
     currentYear = value;
     limitTopScore = 20;
     listGiaiDau.clear();
     compertitionResponse = CompetitionsResponse();
     listTopScore.clear();
+    dataScheDuleByteam  = null;
+    dataTeam = null;
     getAll();
     getStanDing();
     getTopScore();
+    getScheDuleyTeam();
   }
 
   ///
@@ -360,18 +372,12 @@ class HomeController extends GetxController {
   ///
   /// lắng nghe cuộn lịch thi đấu theo ngày hiện tại
   ///
-  void _scrollListenerScheDule() {
-    scrollControllerScheDule.addListener(() {
-      // for(int i = 0;i<compertitionResponse.matches!.length;i++){
-      //   if(Temp.convertUtcToVietnamTime(compertitionResponse.matches![i].utcDate!)=='20:00-20/08'){
-      //     scrollControllerScheDule.jumpTo(i*80);
-      //     break;
-      //   }
-      // }
-      scrollControllerScheDule
-          .jumpTo(scrollControllerScheDule.position.maxScrollExtent);
-      update();
-    });
+  void _scrollListenerScheDule(BuildContext context) {
+    scrollControllerSchedule  = AutoScrollController(
+      axis: scrollDirection,
+      
+    );
+
   }
 
   ///

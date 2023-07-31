@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:luckywheel/screen/blogger/blogger_page.dart';
 import 'package:luckywheel/screen/dashboard/dashboard_controller.dart';
 import 'package:luckywheel/screen/football/football_page.dart';
 import 'package:luckywheel/screen/home/home_page.dart';
+import 'package:luckywheel/screen/movie/movie_page.dart';
 import 'package:luckywheel/util/color_resources.dart';
 
 class DashBoardPage extends GetView<DashBoardController> {
@@ -22,8 +24,8 @@ class DashBoardPage extends GetView<DashBoardController> {
             index: controller.currenIndex,
             children: [
               HomePage(),
-              HomePage(),
-              HomePage(),
+              BloggerPage(),
+              MoviePage()
               
             ],
           ),
@@ -67,19 +69,19 @@ class DashBoardPage extends GetView<DashBoardController> {
             
             items: [
                BottomNavigationBarItem(
-              icon: Icon(Icons.home_filled),
-              label: 'Home',
-              tooltip: 'Home'
+              icon: Icon(Icons.sports_baseball_outlined),
+              label: 'Bóng đá',
+              tooltip: 'Bóng đá'
             ),
              BottomNavigationBarItem(
-              icon: Icon(Icons.live_tv),
-              label: 'Live',
-              tooltip: 'Live'
+              icon: Icon(Icons.web_outlined),
+              label: 'Blogger',
+              tooltip: 'Blogger'
             ),  
             BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: 'Profile',
-              tooltip: 'Profile'
+              icon: Icon(Icons.live_tv),
+              label: 'Xem phim',
+              tooltip: 'Xem phim'
             ),  
             ],
             

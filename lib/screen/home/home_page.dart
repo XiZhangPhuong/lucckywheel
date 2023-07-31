@@ -185,7 +185,7 @@ Widget _scheDuLe(HomeController controller) {
 ///
 Widget _listViewFullScheDule(HomeController controller) {
   return ListView.builder(
-    //controller: controller.scrollControllerScheDule,
+    controller: controller.scrollControllerScheDule,
     shrinkWrap: true,
     itemCount: controller.compertitionResponse.matches!.length,
     itemBuilder: (context, index) {
@@ -285,6 +285,7 @@ Widget _listViewFullScheDuleByTeam(HomeController controller) {
       ? LoadingIndicator()
       : ListView.builder(
           shrinkWrap: true,
+        //  controller: controller.scrollControllerScheDule,
           itemCount: controller.dataScheDuleByteam['resultSet']['count'],
           itemBuilder: (context, index) {
             final item = controller.dataScheDuleByteam['matches'][index];
