@@ -70,8 +70,8 @@ class DashBoardPage extends GetView<DashBoardController> {
             items: [
                BottomNavigationBarItem(
               icon: Icon(Icons.sports_baseball_outlined),
-              label: 'Bóng đá',
-              tooltip: 'Bóng đá'
+              label: 'Thể thao',
+              tooltip: 'Thể thao'
             ),
              BottomNavigationBarItem(
               icon: Icon(Icons.web_outlined),

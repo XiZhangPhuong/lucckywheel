@@ -1,10 +1,11 @@
 import 'package:dio/dio.dart';
+import 'package:luckywheel/temp.dart';
 
 class MovieRepository{
   final dio = Dio();
   final option = Options(
     headers: {
-      'X-RapidAPI-Key' : '11f98101ddmsh90e65654913c333p1fe701jsnebad49b84417',
+      'X-RapidAPI-Key' : '${Temp.getRandomApiKey(Temp.apiKEY_ANIME)}',
       'X-RapidAPI-Host' : 'anime-db.p.rapidapi.com'
     }
   );
@@ -15,12 +16,11 @@ class MovieRepository{
   Future<void> getAllAnime({
     required int page,
     required int size,
-    required  String genres,
     required Function(List<dynamic> resuilt) onSuccess,
     required Function(dynamic e) onError,
   }) async {
      try{
-       final response = await dio.get('https://anime-db.p.rapidapi.com/anime?page=${page}&size=${size}&genres=${genres}',options: option);
+       final response = await dio.get('https://anime-db.p.rapidapi.com/anime?page=${page}&size=${size}',options: option);
        if(response.statusCode==200){
          onSuccess(response.data['data']);
        }

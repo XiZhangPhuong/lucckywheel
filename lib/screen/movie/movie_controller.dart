@@ -1,6 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:luckywheel/repository/movie_repository.dart';
 import 'package:luckywheel/routes/routes_path/movie_routes.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class MovieController extends GetxController {
   List<String> listImage = [
@@ -14,6 +16,9 @@ class MovieController extends GetxController {
   // get anime
   List<dynamic> listAnime = [];
   bool isLoading = false;
+  int page  = 1;
+  int size = 12;
+  RefreshController scrollController = RefreshController();
   // get genre
   List<dynamic> listGenre = [];
   bool isLoadingGenre = false;
@@ -24,11 +29,18 @@ class MovieController extends GetxController {
     getAllGenres();
   }
 
+    @override
+  void onClose() {
+    scrollController.dispose();
+    super.onClose();
+  }
+
   ///
   /// change tabbar
   ///
-  void changeTabBar({required int index}) {
+  Future<void> changeTabBar({required int index,required String gend}) async {
     currenIndex = index;
+    await getAnime();
     update();
   }
 
@@ -38,16 +50,18 @@ class MovieController extends GetxController {
   void gotoDetailAnime({required sentData}){
     Get.toNamed(MovieRoutes.DETAIL_ANIME,arguments: sentData);
   }
+  
+ 
   ///
   /// get anime
   ///
-  Future<void> getAnime(String gend) async {
+  Future<void> getAnime() async {
     await _movieRepository.getAllAnime(
-      page: 1,
-      size: 50,
-      genres: gend,
+      page: page,
+      size: size,
       onSuccess: (resuilt) {
-        listAnime = resuilt;
+        listAnime.addAll(resuilt);
+        print("Số lượng Anime = ${listAnime.length}");
       },
       onError: (e) {
         print(e);
@@ -56,13 +70,36 @@ class MovieController extends GetxController {
   }
 
   ///
+  /// on Loading
+  ///
+ void onLoading() async{
+  await Future.delayed(Duration(seconds: 1));
+   page++;
+   await getAnime();
+   scrollController.loadComplete();
+   update();
+ }
+
+///
+/// on refresh
+///
+void onRefreshing() async{
+  listAnime.clear();
+  size = 12;
+  await getAnime();
+  scrollController.refreshCompleted();
+  update();
+}
+
+  ///
   /// getAllGenres
   ///
   Future<void> getAllGenres() async {
     await _movieRepository.getAllGenres(
       onSuccess: (resuilt) {
         listGenre = resuilt;
-        getAnime(listGenre.first['_id']);
+        listGenre.shuffle();
+        getAnime();
         isLoading = true;
         update();
       },

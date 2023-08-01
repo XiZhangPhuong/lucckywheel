@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -17,8 +19,20 @@ class Temp {
   static const List<String> apiKEY_ANIME = [
     '90b9abf2c2msh7458b846d8c0c50p1cf765jsnd38d8ef684d7',
     '11f98101ddmsh90e65654913c333p1fe701jsnebad49b84417',
-    '',
+    'ea8e5d37b4mshb730f6ed3473d21p1d713fjsn874567460efc',
+    '78044fe373msh16d923203b1b126p13ac57jsna27e7e74a932',
   ];
+
+  
+
+ static String getRandomApiKey(List<String> apiKeyList) {
+  if (apiKeyList.isEmpty) {
+    throw Exception("Danh sách API key là rỗng.");
+  }
+  int randomIndex = Random().nextInt(apiKeyList.length);
+  return apiKeyList[randomIndex];
+}
+
 ////
   /// convertUtcToVietnamTime
   /// 
