@@ -20,96 +20,250 @@ class MoviePage extends GetView<MovieController> {
         return Scaffold(
           backgroundColor: ColorResources.BACKGROUND,
           appBar: _appBar(),
-          body: controller.isLoading == false
-              ? LoadingIndicator()
-              : Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _slideImage(controller),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      // tabbar
-                      _tabBar(controller),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Expanded(
-                        child: SmartRefresher(
-                          controller: controller.scrollController,
-                          enablePullDown: true,
-                          enablePullUp: true,
-                          onLoading: () {
-                            controller.onLoading();
-                          },
-                          onRefresh: () {
-                            controller.onRefreshing();
-                          },
-                          child: SingleChildScrollView(
-                            child: Container(
-                              padding: EdgeInsets.all(10),
-                              child: GridView.builder(
-                                shrinkWrap: true,
-                                itemCount: controller.listAnime.length,
-                                physics: NeverScrollableScrollPhysics(),
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 3,
-                                  crossAxisSpacing: 2,
-                                  mainAxisSpacing: 5,
-                                ),
-                                itemBuilder: (context, index) {
-                                  final item = controller.listAnime[index];
-                                  return GestureDetector(
-                                    onTap: () {
-                                      // controller.gotoDetailAnime(sentData: item);
-                                    },
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Expanded(
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(7.0),
-                                            child: Image.network(
-                                              Validate.nullOrEmpty(item['image'])
-                                                  ? ''
-                                                  : item['image'],
-                                              height: 100,
-                                              width: 100,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 5,
-                                        ),
-                                        Text(
-                                          Validate.nullOrEmpty(item['title'])
-                                              ? ''
-                                              : item['title'],
-                                          overflow: TextOverflow.ellipsis,
-                                          style: GoogleFonts.nunito(
-                                            color: Colors.white,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
+          body: SingleChildScrollView(
+            child: Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _slideImage(controller),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  // phim phổ biến
+                  Container(
+                    padding: EdgeInsets.all(10.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Phổ biến',
+                          style: GoogleFonts.nunito(
+                            fontSize: 18,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
                           ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          height: 300,
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            scrollDirection: Axis.horizontal,
+                            itemCount: controller.listPopuLarMovie.length,
+                            itemBuilder: (context, index) {
+                              final item = controller.listPopuLarMovie[index];
+                              return GestureDetector(
+                                onTap: () {
+                                  print(item['id']);
+                                  controller.gotoDetailAnime(id: item['id'] );
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.only(
+                                    right: 10,
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                    child: Image.network(
+                                      'https://image.tmdb.org/t/p/original${item['poster_path']}',
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  // đánh giá cao
+                  Container(
+                    padding: EdgeInsets.all(10.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Xếp hạng phổ biến',
+                          style: GoogleFonts.nunito(
+                            fontSize: 18,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          height: 300,
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            scrollDirection: Axis.horizontal,
+                            itemCount: controller.listTopRatedMovie.length,
+                            itemBuilder: (context, index) {
+                              final item = controller.listTopRatedMovie[index];
+                              return GestureDetector(
+                                onTap: () {
+                                  print(item['id']);
+                                  controller.gotoDetailAnime(id: item['id'] );
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.only(
+                                    right: 10,
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                    child: Image.network(
+                                      'https://image.tmdb.org/t/p/original${item['poster_path']}',
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(
+                    height: 15,
+                  ),
+                  // đang phát
+                  Container(
+                    padding: EdgeInsets.all(10.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Sắp diễn ra',
+                          style: GoogleFonts.nunito(
+                            fontSize: 18,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          height: 300,
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            scrollDirection: Axis.horizontal,
+                            itemCount: controller.listNowPlayingMovie.length,
+                            itemBuilder: (context, index) {
+                              final item =
+                                  controller.listNowPlayingMovie[index];
+                              return GestureDetector(
+                                onTap: () {
+                                  print(item['id']);
+                                    controller.gotoDetailAnime(id: item['id'] );
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.only(
+                                    right: 10,
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                    child: Image.network(
+                                      'https://image.tmdb.org/t/p/original${item['poster_path']}',
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  ///
+  /// body movie db
+  ///
+
+  ///
+  /// body AniMe
+  ///
+  Expanded _bodyAnime(MovieController controller) {
+    return Expanded(
+      child: SmartRefresher(
+        controller: controller.scrollController,
+        enablePullDown: true,
+        enablePullUp: true,
+        onLoading: () {
+          controller.onLoading();
+        },
+        onRefresh: () {
+          controller.onRefreshing();
+        },
+        child: SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.all(10),
+            child: GridView.builder(
+              shrinkWrap: true,
+              itemCount: controller.listAnime.length,
+              physics: NeverScrollableScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 2,
+                mainAxisSpacing: 5,
+              ),
+              itemBuilder: (context, index) {
+                final item = controller.listAnime[index];
+                return GestureDetector(
+                  onTap: () {
+                    // controller.gotoDetailAnime(sentData: item);
+                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(7.0),
+                          child: Image.network(
+                            Validate.nullOrEmpty(item['image'])
+                                ? ''
+                                : item['image'],
+                            height: 100,
+                            width: 100,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        Validate.nullOrEmpty(item['title'])
+                            ? ''
+                            : item['title'],
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.nunito(
+                          color: Colors.white,
+                          fontSize: 14,
                         ),
                       ),
                     ],
                   ),
-                ),
-        );
-      },
+                );
+              },
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -343,7 +497,7 @@ class MoviePage extends GetView<MovieController> {
     return AppBar(
       backgroundColor: ColorResources.BACKGROUND,
       title: Text(
-        'Anime DB 2023',
+        'The movie DB',
         style: GoogleFonts.nunito(
           fontSize: 18,
           color: Colors.white,

@@ -5,8 +5,11 @@ import 'package:get/get_core/get_core.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:luckywheel/base/loading.dart';
 import 'package:luckywheel/screen/movie/detail_anime/detail_anime_controller.dart';
 import 'package:luckywheel/util/color_resources.dart';
+import 'package:video_player/video_player.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class DetailAnimePage extends GetView<DetailAnimeController> {
   const DetailAnimePage({super.key});
@@ -18,58 +21,51 @@ class DetailAnimePage extends GetView<DetailAnimeController> {
       builder: (DetailAnimeController controller) {
         return Scaffold(
           backgroundColor: ColorResources.BACKGROUND,
-          body: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Image.network(
-                  controller.data['image'],
-                  height: Get.height * 0.35,
-                  width: Get.width,
-                  fit: BoxFit.cover,
-                ),
-                Container(
-                  padding: EdgeInsets.all(10.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          controller.data['title'],
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.nunito(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
+          body: controller.isLoadingMovie == false
+              ? LoadingIndicator()
+              : SingleChildScrollView(
+                  child: Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Image.network(
+                            'https://image.tmdb.org/t/p/original${controller.dataMovie['backdrop_path']}'),
+                        Container(
+                          padding: EdgeInsets.all(10.0),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  controller.dataMovie['title'],
+                                  style: GoogleFonts.nunito(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              Icon(
+                                Icons.favorite,
+                                color: ColorResources.MAIN,
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.favorite_outline,
-                          color: ColorResources.MAIN,
-                          size: 27,
+                        Divider(),
+                        Container(
+                          padding: EdgeInsets.all(10.0),
+                          child: Text(
+                            controller.dataMovie['overview'],
+                            style: GoogleFonts.nunito(
+                              color: Colors.white,
+                              fontSize: 14,
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-       
-                Divider(color: Colors.white70.withOpacity(0.5),),
-                Container(
-                  padding: EdgeInsets.all(10.0),
-                  child:  Text(
-                        controller.data['synopsis'],
-                        style: GoogleFonts.nunito(
-                          color: Colors.white,
-                          fontSize: 14,
-                        ),
-                      ),
-                ),
-              ],
-            ),
-          ),
         );
       },
     );

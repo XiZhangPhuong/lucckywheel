@@ -16,6 +16,7 @@ import 'package:luckywheel/routes/routes_path/home_routes.dart';
 import 'package:luckywheel/shares/shared_preference_helper.dart';
 import 'package:luckywheel/temp.dart';
 import 'package:luckywheel/util/color_resources.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 
 class HomeController extends GetxController {
@@ -39,9 +40,10 @@ class HomeController extends GetxController {
   // list top score
   List<TopScoreResponse> listTopScore = [];
   bool isLoadingTopScore = false;
-  int limitTopScore = 20;
+  int limitTopScore = 10;
   // bắt sự kiện cuộn Top bàn thắng
   ScrollController scrollControllerTopScore = ScrollController();
+  RefreshController refreshControllerTopScore = RefreshController();
   // bắt sự kiện cuộn lịch thi đấu
   ScrollController scrollControllerScheDule = ScrollController();
   final scrollDirection = Axis.vertical;
@@ -88,6 +90,7 @@ class HomeController extends GetxController {
      
     });
     scrollControllerScheDule.dispose();
+    refreshControllerTopScore.dispose();
     super.onClose();
   }
 
@@ -321,6 +324,27 @@ class HomeController extends GetxController {
         print(e);
       },
     );
+  }
+
+  ///
+  /// onRefreshing TopScore
+  ///
+  void onRefreshingTopScore() async {
+    listTopScore.clear();
+    limitTopScore = 10;
+    await getTopScore();
+    refreshControllerTopScore.refreshCompleted();
+    update();
+  }
+
+  ///
+  /// onLoading TopScore
+  ///
+  void onLoadingTopScore() async{
+    limitTopScore+=10;
+    await getTopScore();
+    refreshControllerTopScore.loadComplete();
+    update();
   }
 
   ///

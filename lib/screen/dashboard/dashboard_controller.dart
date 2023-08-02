@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 
 class DashBoardController extends GetxController{
-  int currenIndex  = 0;
+  int currenIndex  = 2;
 
   ///
   /// changePage

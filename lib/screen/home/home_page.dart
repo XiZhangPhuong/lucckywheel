@@ -9,6 +9,7 @@ import 'package:luckywheel/helper/validate.dart';
 import 'package:luckywheel/screen/home/home_controller.dart';
 import 'package:luckywheel/temp.dart';
 import 'package:luckywheel/util/color_resources.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class HomePage extends GetView<HomeController> {
   const HomePage({super.key});
@@ -658,82 +659,92 @@ Widget _topScore(HomeController controller) {
                 ),
               ),
             )
-          : Container(
-              child: DataTable2(
-                // scrollController: controller.scrollControllerTopScore,
-                columns: [
-                  // Các cột của DataTable
-                  DataColumn2(
-                      label: Text(
-                        ' ',
-                        style: GoogleFonts.nunito(
-                          color: Colors.white,
-                          fontSize: 14,
+          : SmartRefresher(
+            controller: controller.refreshControllerTopScore,
+            enablePullDown: true,
+            enablePullUp: true,
+            onLoading: () {
+              controller.onLoadingTopScore();
+            },
+            onRefresh: () {
+              controller.onRefreshingTopScore();
+            },
+            child: Container(
+                child: DataTable2(
+                  columns: [
+                    // Các cột của DataTable
+                    DataColumn2(
+                        label: Text(
+                          ' ',
+                          style: GoogleFonts.nunito(
+                            color: Colors.white,
+                            fontSize: 14,
+                          ),
+                        ),
+                        size: ColumnSize.M),
+                    DataColumn2(
+                      label: GestureDetector(
+                        onTap: () {
+                          controller.limitTopScore += 10;
+                          controller.getTopScore();
+                        },
+                        child: Text(
+                          'Cầu thủ',
+                          style: GoogleFonts.nunito(
+                            color: Colors.white,
+                            fontSize: 16,
+                          ),
                         ),
                       ),
-                      size: ColumnSize.M),
-                  DataColumn2(
-                    label: GestureDetector(
-                      onTap: () {
-                        controller.limitTopScore += 10;
-                        controller.getTopScore();
-                      },
-                      child: Text(
-                        'Cầu thủ',
+                      size: ColumnSize.L,
+                      fixedWidth: 100,
+                    ),
+                    DataColumn2(
+                      label: Text(
+                        'Câu lạc bộ',
                         style: GoogleFonts.nunito(
                           color: Colors.white,
                           fontSize: 16,
                         ),
                       ),
+                      size: ColumnSize.L,
+                      fixedWidth: 130,
                     ),
-                    size: ColumnSize.L,
-                    fixedWidth: 100,
-                  ),
-                  DataColumn2(
-                    label: Text(
-                      'Câu lạc bộ',
-                      style: GoogleFonts.nunito(
-                        color: Colors.white,
-                        fontSize: 16,
-                      ),
-                    ),
-                    size: ColumnSize.L,
-                    fixedWidth: 130,
-                  ),
-                  DataColumn2(
-                    label: Text(
-                      'G',
-                      style: GoogleFonts.nunito(
-                        color: Colors.white,
-                        fontSize: 16,
-                      ),
-                    ),
-                    size: ColumnSize.M,
-                  ),
-                  DataColumn2(
+                    DataColumn2(
                       label: Text(
-                        'A',
+                        'G',
                         style: GoogleFonts.nunito(
                           color: Colors.white,
                           fontSize: 16,
                         ),
                       ),
-                      size: ColumnSize.M),
-                  DataColumn2(
-                      label: Text(
-                        'P',
-                        style: GoogleFonts.nunito(
-                          color: Colors.white,
-                          fontSize: 16,
+                      size: ColumnSize.M,
+                    ),
+                    DataColumn2(
+                        label: Text(
+                          'A',
+                          style: GoogleFonts.nunito(
+                            color: Colors.white,
+                            fontSize: 16,
+                          ),
                         ),
-                      ),
-                      size: ColumnSize.M),
-                ],
-                rows: rows,
-                columnSpacing: 8,
-                horizontalMargin: 0,
+                        size: ColumnSize.M),
+                    DataColumn2(
+                        label: Text(
+                          'P',
+                          style: GoogleFonts.nunito(
+                            color: Colors.white,
+                            fontSize: 16,
+                          ),
+                        ),
+                        size: ColumnSize.M),
+                  ],
+                  rows: rows,
+                  columnSpacing: 8,
+                  horizontalMargin: 0,
+                ),
               ),
-            );
+          );
 }
 
 ///

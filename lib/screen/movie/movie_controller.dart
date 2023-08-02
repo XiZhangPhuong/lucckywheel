@@ -16,20 +16,36 @@ class MovieController extends GetxController {
   // get anime
   List<dynamic> listAnime = [];
   bool isLoading = false;
-  int page  = 1;
+  int page = 1;
   int size = 12;
   RefreshController scrollController = RefreshController();
   // get genre
   List<dynamic> listGenre = [];
   bool isLoadingGenre = false;
   int currenIndex = 0;
+
+  // get popular movie
+  List<dynamic> listPopuLarMovie = [];
+  bool isLoadingPopuLar = false;
+
+  // get toprated movie
+  List<dynamic> listTopRatedMovie = [];
+  bool isLoadingTopRated = false;
+
+  // get now playing
+  List<dynamic> listNowPlayingMovie = [];
+  bool isLoadingNowPlaying = false;
+
   @override
   void onInit() {
     super.onInit();
-    getAllGenres();
+    // getAllGenres();
+    _getPopularMovie();
+    _getTopRaredMovie();
+    _getNowPlayingMovie();
   }
 
-    @override
+  @override
   void onClose() {
     scrollController.dispose();
     super.onClose();
@@ -38,20 +54,74 @@ class MovieController extends GetxController {
   ///
   /// change tabbar
   ///
-  Future<void> changeTabBar({required int index,required String gend}) async {
+  Future<void> changeTabBar({required int index, required String gend}) async {
     currenIndex = index;
     await getAnime();
     update();
   }
 
   ///
+  /// get popular movie
+  ///
+  ///
+  Future<void> _getPopularMovie() async {
+    await _movieRepository.getPopularMovie(
+      page: 1,
+      onSuccess: (data) {
+        listPopuLarMovie = data;
+        listPopuLarMovie.shuffle();
+        isLoadingPopuLar = true;
+        update();
+      },
+      onError: (e) {
+        print(e);
+      },
+    );
+  }
+
+  ///
+  /// get top rared movie
+  ///
+Future<void> _getTopRaredMovie() async {
+    await _movieRepository.getTopRatedMovie(
+      page: 1,
+      onSuccess: (data) {
+        listTopRatedMovie = data;
+        listTopRatedMovie.shuffle();
+        isLoadingTopRated = true;
+        update();
+      },
+      onError: (e) {
+        print(e);
+      },
+    );
+  }
+
+  ///
+  /// get top rared movie
+  ///
+Future<void> _getNowPlayingMovie() async {
+    await _movieRepository.getNowPlaying(
+      page: 1,
+      onSuccess: (data) {
+        listNowPlayingMovie = data;
+        listNowPlayingMovie.shuffle();
+        isLoadingNowPlaying = true;
+        update();
+      },
+      onError: (e) {
+        print(e);
+      },
+    );
+  }
+
+  ///
   /// go to detail anime
   ///
-  void gotoDetailAnime({required sentData}){
-    Get.toNamed(MovieRoutes.DETAIL_ANIME,arguments: sentData);
+  void gotoDetailAnime({required int id}) {
+    Get.toNamed(MovieRoutes.DETAIL_ANIME, arguments: id);
   }
-  
- 
+
   ///
   /// get anime
   ///
@@ -72,24 +142,24 @@ class MovieController extends GetxController {
   ///
   /// on Loading
   ///
- void onLoading() async{
-  await Future.delayed(Duration(seconds: 1));
-   page++;
-   await getAnime();
-   scrollController.loadComplete();
-   update();
- }
+  void onLoading() async {
+    await Future.delayed(Duration(seconds: 1));
+    page++;
+    await getAnime();
+    scrollController.loadComplete();
+    update();
+  }
 
-///
-/// on refresh
-///
-void onRefreshing() async{
-  listAnime.clear();
-  size = 12;
-  await getAnime();
-  scrollController.refreshCompleted();
-  update();
-}
+  ///
+  /// on refresh
+  ///
+  void onRefreshing() async {
+    listAnime.clear();
+    size = 12;
+    await getAnime();
+    scrollController.refreshCompleted();
+    update();
+  }
 
   ///
   /// getAllGenres

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
@@ -6,8 +8,8 @@ import 'package:luckywheel/muti_language/locale_string.dart';
 import 'package:luckywheel/routes/app_routes.dart';
 import 'package:luckywheel/routes/routes_path/home_routes.dart';
 import 'package:luckywheel/shares/shared_preference_helper.dart';
+void main()  {
 
-void main() {
   runApp(const MyApp());
 }
 

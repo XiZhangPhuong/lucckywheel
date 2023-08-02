@@ -16,6 +16,7 @@ class Temp {
   static const String TOKEN_FOOTBALL = 'bf06f621ea86471ca38da14b906baaec';
   static const String APIKEY_BLOGGER = 'AIzaSyClkPA7IDNuoQHM27nTbEJyPIm0AIrcFFM';
   static const String BLOGGER_ID = '5346074296323457457';
+  static const String API_KEY_MOVIE = 'c00bdea57d0592fe97feeaace5870900';
   static const List<String> apiKEY_ANIME = [
     '90b9abf2c2msh7458b846d8c0c50p1cf765jsnd38d8ef684d7',
     '11f98101ddmsh90e65654913c333p1fe701jsnebad49b84417',

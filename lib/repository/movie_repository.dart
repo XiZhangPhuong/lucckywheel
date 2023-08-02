@@ -46,7 +46,78 @@ Future<void> getAllGenres({
   }catch(e){
      onError(e);
   }
-}  
- 
+} 
+
+///
+/// lấy danh phim phổ biến
+///
+Future<void> getPopularMovie({
+  int? page,
+  required Function(List<dynamic> data) onSuccess,
+  required Function(dynamic e) onError,
+}) async {
+  try{
+    final response  = await dio.get('https://api.themoviedb.org/3/movie/popular?api_key=${Temp.API_KEY_MOVIE}&language=en-ES&page=${page}');
+    if(response.statusCode==200){
+      onSuccess(response.data['results']);
+    }
+  }catch(e){
+     onError(e);
+  }
+}
+
+///
+/// lấy danh sách phim xếp hạng hàng đầu
+///
+Future<void> getTopRatedMovie({
+  int? page,
+  required Function(List<dynamic> data) onSuccess,
+  required Function(dynamic e) onError,
+}) async {
+  try{
+    final response  = await dio.get('https://api.themoviedb.org/3/movie/top_rated?api_key=${Temp.API_KEY_MOVIE}&language=en-ES&page=${page}');
+    if(response.statusCode==200){
+      onSuccess(response.data['results']);
+    }
+  }catch(e){
+     onError(e);
+  }
+}
+
+///
+/// lấy danh sách phim đang phát 
+///
+Future<void> getNowPlaying({
+  int? page,
+  required Function(List<dynamic> data) onSuccess,
+  required Function(dynamic e) onError,
+}) async {
+  try{
+    final response  = await dio.get('https://api.themoviedb.org/3/movie/upcoming?api_key=${Temp.API_KEY_MOVIE}&language=en-ES&page=${page}');
+    if(response.statusCode==200){
+      onSuccess(response.data['results']);
+    }
+  }catch(e){
+     onError(e);
+  }
+}
+
+///
+/// chi tiết phim
+///
+Future<void> getDetailMovie({
+  required int id,
+  required Function(dynamic data) onSuccess,
+  required Function(dynamic e) onError,
+}) async {
+  try{
+    final response = await dio.get('https://api.themoviedb.org/3/movie/${id}?api_key=${Temp.API_KEY_MOVIE}&append_to_response=videos&language=vi-VN');
+    if(response.statusCode==200){
+      onSuccess(response.data);
+    }
+  }catch(e){
+    onError(e);
+  }
+}
 }
 
