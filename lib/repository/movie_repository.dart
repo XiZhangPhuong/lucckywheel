@@ -57,7 +57,7 @@ Future<void> getPopularMovie({
   required Function(dynamic e) onError,
 }) async {
   try{
-    final response  = await dio.get('https://api.themoviedb.org/3/movie/popular?api_key=${Temp.API_KEY_MOVIE}&language=en-ES&page=${page}');
+    final response  = await dio.get('https://api.themoviedb.org/3/movie/popular?api_key=${Temp.API_KEY_MOVIE}&language=vi-VN&page=${page}');
     if(response.statusCode==200){
       onSuccess(response.data['results']);
     }
@@ -111,7 +111,7 @@ Future<void> getDetailMovie({
   required Function(dynamic e) onError,
 }) async {
   try{
-    final response = await dio.get('https://api.themoviedb.org/3/movie/${id}?api_key=${Temp.API_KEY_MOVIE}&append_to_response=videos&language=vi-VN');
+    final response = await dio.get('https://api.themoviedb.org/3/tv/${id}?api_key=${Temp.API_KEY_MOVIE}&append_to_response=videos&language=vi-VN');
     if(response.statusCode==200){
       onSuccess(response.data);
     }
@@ -119,5 +119,99 @@ Future<void> getDetailMovie({
     onError(e);
   }
 }
+
+///
+/// lấy danh sách movie trending theo tuần
+///
+Future<void> getTrendingMovieByWeek({
+   required int page,
+   String? language,
+   required Function(List<dynamic> data) onSuccess,
+   required Function(dynamic e) onError,
+}) async {
+
+  try{
+     final response = await dio.get('https://api.themoviedb.org/3/trending/movie/week?language=vi-VN&api_key=${Temp.API_KEY_MOVIE}&page=${page}');
+     if(response.statusCode==200){
+       onSuccess(response.data['results']);
+     }
+  }catch(e){
+     onError(e);
+  }
+}
+
+///
+/// lấy danh sách tv show trending theo tuần
+///
+Future<void> getTrendingTVByWeek({
+   required int page,
+   String? language,
+   required Function(List<dynamic> data) onSuccess,
+   required Function(dynamic e) onError,
+}) async {
+
+  try{
+     final response = await dio.get('https://api.themoviedb.org/3/trending/tv/week?language=vi-VN&api_key=${Temp.API_KEY_MOVIE}&page=${page}');
+     if(response.statusCode==200){
+       onSuccess(response.data['results']);
+     }
+  }catch(e){
+     onError(e);
+  }
+}
+
+///
+/// lấy danh sách tất cả các diễn viên của phim 
+///
+Future<void> getPoformerMovie({
+  required int id,
+  required Function(List<dynamic> data) onSuccess,
+  required Function(dynamic e) onError,
+}) async {
+  try{
+    final response = await dio.get('http://api.themoviedb.org/3/movie/${id}/casts?api_key=${Temp.API_KEY_MOVIE}');
+    if(response.statusCode==200){
+      onSuccess(response.data['cast']);
+    }
+  }catch(e){
+    onError(e);
+  }
+}
+
+///
+/// lấy tấy cả video của phim
+///
+Future<void> getAllVideoMovie({
+   required int id,
+   required Function(List<dynamic> data) onSuccess,
+   required Function(dynamic e) onError,
+}) async {
+   try{ 
+      final response = await dio.get('https://api.themoviedb.org/3/movie/${id}/videos?api_key=${Temp.API_KEY_MOVIE}');
+      if(response.statusCode==200){
+        onSuccess(response.data['results']);
+      }
+   }catch(e){
+      onError(e);
+   }
+}
+
+///
+/// lấy danh sách tương tự của phim
+///
+ Future<void> getSimilarMovie({
+  required int id,
+  required Function(List<dynamic> data) onSuccess,
+  required Function(dynamic e) onError,
+ }) async {
+   try{
+     final response = await dio.get('https://api.themoviedb.org/3/movie/${id}/similar?api_key=${Temp.API_KEY_MOVIE}&language=vi-VN&page=1');
+     if(response.statusCode==200){
+      onSuccess(response.data['results']);
+     }
+   }catch(e){
+     onError(e);
+   }
+ }
 }
 

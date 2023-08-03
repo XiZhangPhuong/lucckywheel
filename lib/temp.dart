@@ -101,6 +101,19 @@ class Temp {
     return false;
   }
 
+///
+/// image movie db
+///
+static List<String> imageMovieDB({required String url}){
+  List<String> list = [];
+  String image1 = 'https://image.tmdb.org/t/p/original/${url}';
+  String image2 = 'https://image.tmdb.org/t/p/original/${url}';
+  String image3 = 'https://image.tmdb.org/t/p/w500/${url}';
+  list.add(image1);
+  list.add(image2);
+  list.add(image3);
+  return list;
+}
 
  ///
 /// custom ADS
@@ -113,5 +126,13 @@ static Widget _customADS({String? url}){
         errorWidget: (context, url, error) => Icon(Icons.error),
       ),
   );
-} 
+}
+
+  ///
+  /// convert Vote
+  ///
+  static String convertVote(dynamic number) {
+    return number.toStringAsFixed(1);
+  }
+
 }

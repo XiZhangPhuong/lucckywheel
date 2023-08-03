@@ -61,7 +61,7 @@ class MovieController extends GetxController {
   }
 
   ///
-  /// get popular movie
+  /// get popular movie :  danh sách phim phổ biến
   ///
   ///
   Future<void> _getPopularMovie() async {
@@ -69,7 +69,6 @@ class MovieController extends GetxController {
       page: 1,
       onSuccess: (data) {
         listPopuLarMovie = data;
-        listPopuLarMovie.shuffle();
         isLoadingPopuLar = true;
         update();
       },

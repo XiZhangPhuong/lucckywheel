@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:luckywheel/base/loading.dart';
 import 'package:luckywheel/helper/validate.dart';
 import 'package:luckywheel/screen/movie/movie_controller.dart';
+import 'package:luckywheel/temp.dart';
 import 'package:luckywheel/util/color_resources.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -22,6 +23,9 @@ class MoviePage extends GetView<MovieController> {
           appBar: _appBar(),
           body: SingleChildScrollView(
             child: Container(
+              padding: EdgeInsets.symmetric(
+                vertical: 15,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -31,17 +35,32 @@ class MoviePage extends GetView<MovieController> {
                   ),
                   // phim phổ biến
                   Container(
-                    padding: EdgeInsets.all(10.0),
+                    padding: EdgeInsets.only(
+                      left: 10,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Phổ biến',
-                          style: GoogleFonts.nunito(
-                            fontSize: 18,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Popular',
+                              style: GoogleFonts.nunito(
+                                fontSize: 18,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {},
+                              icon: Icon(
+                                Icons.keyboard_arrow_right_outlined,
+                                color: Colors.white,
+                                size: 30,
+                              ),
+                            ),
+                          ],
                         ),
                         SizedBox(
                           height: 10,
@@ -57,17 +76,64 @@ class MoviePage extends GetView<MovieController> {
                               return GestureDetector(
                                 onTap: () {
                                   print(item['id']);
-                                  controller.gotoDetailAnime(id: item['id'] );
+                                  controller.gotoDetailAnime(id: item['id']);
                                 },
                                 child: Container(
+                                  width: 150,
                                   margin: EdgeInsets.only(
                                     right: 10,
                                   ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(5.0),
-                                    child: Image.network(
-                                      'https://image.tmdb.org/t/p/original${item['poster_path']}',
-                                    ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(5.0),
+                                        child: Image.network(
+                                          'https://image.tmdb.org/t/p/original${item['poster_path']}',
+                                          fit: BoxFit.cover,
+                                          width: 150,
+                                          height: 250,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Icons.star,
+                                            color: Colors.yellow,
+                                            size: 20,
+                                          ),
+                                          SizedBox(
+                                            width: 5,
+                                          ),
+                                          Text(
+                                            Temp.convertVote(
+                                                item['vote_average']),
+                                            style: GoogleFonts.nunito(
+                                              color: Colors.white,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text(
+                                        Validate.nullOrEmpty(item['title'])
+                                            ? item['name']
+                                            : item['title'],
+                                        style: GoogleFonts.nunito(
+                                          color: Colors.white,
+                                          fontSize: 14,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
                                   ),
                                 ),
                               );
@@ -108,7 +174,7 @@ class MoviePage extends GetView<MovieController> {
                               return GestureDetector(
                                 onTap: () {
                                   print(item['id']);
-                                  controller.gotoDetailAnime(id: item['id'] );
+                                  controller.gotoDetailAnime(id: item['id']);
                                 },
                                 child: Container(
                                   margin: EdgeInsets.only(
@@ -161,7 +227,7 @@ class MoviePage extends GetView<MovieController> {
                               return GestureDetector(
                                 onTap: () {
                                   print(item['id']);
-                                    controller.gotoDetailAnime(id: item['id'] );
+                                  controller.gotoDetailAnime(id: item['id']);
                                 },
                                 child: Container(
                                   margin: EdgeInsets.only(
@@ -224,9 +290,7 @@ class MoviePage extends GetView<MovieController> {
               itemBuilder: (context, index) {
                 final item = controller.listAnime[index];
                 return GestureDetector(
-                  onTap: () {
-                    // controller.gotoDetailAnime(sentData: item);
-                  },
+                  onTap: () {},
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -497,9 +561,9 @@ class MoviePage extends GetView<MovieController> {
     return AppBar(
       backgroundColor: ColorResources.BACKGROUND,
       title: Text(
-        'The movie DB',
+        'Home',
         style: GoogleFonts.nunito(
-          fontSize: 18,
+          fontSize: 20,
           color: Colors.white,
         ),
       ),
@@ -521,7 +585,7 @@ class MoviePage extends GetView<MovieController> {
         IconButton(
           onPressed: () {},
           icon: Icon(
-            Icons.notifications,
+            Icons.notifications_outlined,
             color: Colors.white,
           ),
         ),
