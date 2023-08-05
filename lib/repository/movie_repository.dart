@@ -20,7 +20,7 @@ class MovieRepository{
     required Function(dynamic e) onError,
   }) async {
      try{
-       final response = await dio.get('https://anime-db.p.rapidapi.com/anime?page=${page}&size=${size}&genres=Hentai',options: option);
+       final response = await dio.get('https://anime-db.p.rapidapi.com/anime?page=${page}&size=${size}',options: option);
        if(response.statusCode==200){
          onSuccess(response.data['data']);
        }

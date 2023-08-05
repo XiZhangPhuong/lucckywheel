@@ -205,6 +205,13 @@ class MovieController extends GetxController {
   }
 
   ///
+  /// go to hentai anime
+  ///
+  void gotoHentaiAnime(){
+    Get.toNamed(MovieRoutes.ANIME);
+  }
+
+  ///
   /// getAllGenres
   ///
   Future<void> getAllGenres() async {

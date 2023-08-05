@@ -709,7 +709,7 @@ class MoviePage extends GetView<MovieController> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Hentai Anime',
+                'Anime',
                 style: GoogleFonts.nunito(
                   fontSize: 18,
                   color: Colors.white,
@@ -717,7 +717,9 @@ class MoviePage extends GetView<MovieController> {
                 ),
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  controller.gotoHentaiAnime();
+                },
                 icon: Icon(
                   Icons.keyboard_arrow_right_outlined,
                   color: Colors.white,
