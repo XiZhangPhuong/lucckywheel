@@ -23,10 +23,10 @@ class TrendMoviePage extends GetView<TrendMovieController> {
         return Scaffold(
           backgroundColor: ColorResources.BACKGROUND,
           appBar: _appBar(),
+          floatingActionButton: _floatTingButton(controller),
           body: controller.isLoading == false
               ? LoadingIndicator()
-              : 
-              Container(
+              : Container(
                   padding: EdgeInsets.all(10.0),
                   child: SmartRefresher(
                     controller: controller.refreshController,
@@ -41,6 +41,7 @@ class TrendMoviePage extends GetView<TrendMovieController> {
                     child: GridView.builder(
                       shrinkWrap: true,
                       itemCount: controller.listMovie.length,
+                      controller: controller.scrollController,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           crossAxisSpacing: 10,
@@ -50,7 +51,10 @@ class TrendMoviePage extends GetView<TrendMovieController> {
                         return GestureDetector(
                           onTap: () {
                             print(item['id']);
-                            controller.showBottomSheetMovie(id: item['id'], context: context,media_type: item['media_type']);
+                            controller.showBottomSheetMovie(
+                                id: item['id'],
+                                context: context,
+                                media_type: item['media_type']);
                           },
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,12 +118,34 @@ class TrendMoviePage extends GetView<TrendMovieController> {
                     ),
                   ),
                 ),
-      
         );
       },
     );
   }
-}
+
+   ///
+  /// floatingButon
+  ///
+  Widget _floatTingButton(TrendMovieController controller) {
+    return AnimatedOpacity(
+      opacity: controller.showFloatingButton.value ? 1.0 : 0.0,
+      duration: Duration(microseconds: 300),
+      child: Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          
+        ),
+        child: FloatingActionButton(
+          onPressed: () {
+            controller.scrollToTop();
+          },
+          child: Icon(Icons.arrow_upward,color: Colors.white,),
+          mini: true,
+          backgroundColor: ColorResources.MAIN.withOpacity(0.7),
+        ),
+      ),
+    );
+  }
 
 ///
 /// appBar
@@ -158,4 +184,5 @@ AppBar _appBar() {
       ),
     ],
   );
+}
 }

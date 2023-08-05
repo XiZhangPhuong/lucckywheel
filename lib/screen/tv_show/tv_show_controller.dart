@@ -22,11 +22,47 @@ class TvShowController extends GetxController {
   bool isLoadingVideoMovie = false;
   int id = 0;
 
+    // scroll listen
+  RxBool showFloatingButton = false.obs;
+  ScrollController scrollController = ScrollController();
+
   @override
   void onInit() {
     super.onInit();
+    scrollController.addListener(
+      () {
+        _onScroll();
+      },
+    );
     _getTrendingMovie();
   }
+
+  
+  ///
+  /// scroll to top
+  ///
+  void scrollToTop() {
+    scrollController.animateTo(
+      0.0,
+      duration: Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
+    update();
+  }
+
+  ///
+  /// _onScroll
+  ///
+  void _onScroll() {
+    if (scrollController.position.pixels >= 500) {
+      showFloatingButton.value = true;
+    } else {
+      showFloatingButton.value = false;
+    }
+    update();
+  }
+
+
 
     ///
   /// get all video movie

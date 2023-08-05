@@ -17,22 +17,63 @@ class TrendMovieController extends GetxController {
   int page = 1;
   RefreshController refreshController = RefreshController();
 
-   // get all video phim
+  // get all video phim
   List<dynamic> listVideoMovie = [];
   bool isLoadingVideoMovie = false;
   int id = 0;
 
+  // scroll listen
+  RxBool showFloatingButton = false.obs;
+  ScrollController scrollController = ScrollController();
   @override
   void onInit() {
     super.onInit();
+    scrollController.addListener(
+      () {
+        _onScroll();
+      },
+    );
     _getTrendingMovie();
   }
 
-  
+  @override
+  void onClose() {
+    scrollController.removeListener(() {
+      _onScroll();
+    });
+    scrollController.dispose();
+    super.onClose();
+  }
+
+  ///
+  /// scroll to top
+  ///
+  void scrollToTop() {
+    scrollController.animateTo(
+      0.0,
+      duration: Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
+    update();
+  }
+
+  ///
+  /// _onScroll
+  ///
+  void _onScroll() {
+    if (scrollController.position.pixels >= 500) {
+      showFloatingButton.value = true;
+    } else {
+      showFloatingButton.value = false;
+    }
+    update();
+  }
+
   ///
   /// get all video movie
   ///
-  Future<void> getAllVideoMovie({required int id,required String media_type}) async {
+  Future<void> getAllVideoMovie(
+      {required int id, required String media_type}) async {
     await _movieRepository.getAllVideoMovie(
       id: id,
       media_type: media_type,
@@ -46,12 +87,12 @@ class TrendMovieController extends GetxController {
       },
     );
   }
-  
+
   ///
   /// go to detail movie
   ///
-  void gotoDetailMovie(int id){
-    Get.toNamed(TrendMovieRoutes.DETAIL_ANIME,arguments: id);
+  void gotoDetailMovie(int id) {
+    Get.toNamed(TrendMovieRoutes.DETAIL_ANIME, arguments: id);
   }
 
   ///
@@ -99,18 +140,20 @@ class TrendMovieController extends GetxController {
     update();
   }
 
-   ///
+  ///
   /// show bottot sheet team football by id
   ///
   Future<void> showBottomSheetMovie(
-      {required int id,required BuildContext context,required String media_type}) async {
+      {required int id,
+      required BuildContext context,
+      required String media_type}) async {
     showDialog(
       context: context,
       barrierDismissible:
           false, // Đảm bảo dialog không thể đóng khi bấm ra ngoài
       builder: (context) => LoadingIndicator(),
     );
-    await getAllVideoMovie(id: id,media_type: media_type);
+    await getAllVideoMovie(id: id, media_type: media_type);
     Get.back();
     Get.bottomSheet(
       Container(
@@ -143,5 +186,4 @@ class TrendMovieController extends GetxController {
       isScrollControlled: true,
     );
   }
-
 }

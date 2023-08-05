@@ -23,6 +23,7 @@ class TvShowPage extends GetView<TvShowController> {
         return Scaffold(
           backgroundColor: ColorResources.BACKGROUND,
           appBar: _appBar(),
+          floatingActionButton: _floatTingButton(controller),
           body: controller.isLoading == false
               ? LoadingIndicator()
               : Container(
@@ -39,6 +40,7 @@ class TvShowPage extends GetView<TvShowController> {
                     enablePullUp: true,
                     child: GridView.builder(
                       shrinkWrap: true,
+                      controller: controller.scrollController,
                       itemCount: controller.listTV.length,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
@@ -160,3 +162,28 @@ AppBar _appBar() {
     ],
   );
 }
+
+
+   ///
+  /// floatingButon
+  ///
+  Widget _floatTingButton(TvShowController controller) {
+    return AnimatedOpacity(
+      opacity: controller.showFloatingButton.value ? 1.0 : 0.0,
+      duration: Duration(microseconds: 300),
+      child: Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          
+        ),
+        child: FloatingActionButton(
+          onPressed: () {
+            controller.scrollToTop();
+          },
+          child: Icon(Icons.arrow_upward,color: Colors.white,),
+          mini: true,
+          backgroundColor: ColorResources.MAIN.withOpacity(0.7),
+        ),
+      ),
+    );
+  }
