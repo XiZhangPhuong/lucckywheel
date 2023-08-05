@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get_core/get_core.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
@@ -13,7 +14,6 @@ import 'package:luckywheel/temp.dart';
 import 'package:luckywheel/util/color_resources.dart';
 import 'package:video_player/video_player.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-
 class DetailAnimePage extends GetView<DetailAnimeController> {
   const DetailAnimePage({super.key});
 
@@ -26,248 +26,255 @@ class DetailAnimePage extends GetView<DetailAnimeController> {
           backgroundColor: ColorResources.BACKGROUND,
           body: controller.isLoadingMovie == false
               ? LoadingIndicator()
-              : Container(
-                  padding: EdgeInsets.only(
-                    bottom: 15,
-                  ),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Stack(
-                          children: [
-                            Image.network(
-                              Temp.imageMovieDB(url: controller.dataMovie['backdrop_path']).last,
-                              fit: BoxFit.cover,
+              : _bodyDetailMovie(controller)
+        );
+      },
+    );
+  }
+
+///
+///
+///
+  Container _bodyDetailMovie(DetailAnimeController controller) {
+    return Container(
+                padding: EdgeInsets.only(
+                  bottom: 15,
+                ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Stack(
+                        children: [
+                          Image.network(
+                            Temp.imageMovieDB(url: controller.dataMovie['backdrop_path']).last,
+                            fit: BoxFit.cover,
+                          ),
+                          // icon back
+                          Positioned(
+                            top: 30,
+                            left: 15,
+                            child: GestureDetector(
+                              onTap: () {
+                                Get.back();
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(7.0),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.black.withOpacity(0.3),
+                                ),
+                                child: Icon(
+                                  Icons.arrow_back,
+                                  color: Colors.white,
+                                ),
+                              ),
                             ),
-                            // icon back
-                            Positioned(
-                              top: 30,
-                              left: 15,
-                              child: GestureDetector(
-                                onTap: () {
-                                  Get.back();
-                                },
+                          ),
+                          // ico play video trailer
+                          Positioned.fill(
+                            child: GestureDetector(
+                              onTap: () {
+                                controller.showBottomSheet(
+                                    listData: controller.listVideo);
+                              },
+                              child: Align(
+                                alignment: Alignment.center,
                                 child: Container(
-                                  padding: EdgeInsets.all(7.0),
+                                  width: 50,
+                                  height: 50,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: Colors.black.withOpacity(0.3),
+                                    color: Colors.black.withOpacity(0.7),
                                   ),
                                   child: Icon(
-                                    Icons.arrow_back,
+                                    Icons.play_arrow,
                                     color: Colors.white,
+                                    size: 30,
                                   ),
                                 ),
                               ),
                             ),
-                            // ico play video trailer
-                            Positioned.fill(
-                              child: GestureDetector(
-                                onTap: () {
-                                  controller.showBottomSheet(
-                                      listData: controller.listVideo);
-                                },
-                                child: Align(
-                                  alignment: Alignment.center,
-                                  child: Container(
-                                    width: 50,
-                                    height: 50,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.black.withOpacity(0.7),
-                                    ),
-                                    child: Icon(
-                                      Icons.play_arrow,
-                                      color: Colors.white,
-                                      size: 30,
-                                    ),
-                                  ),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(
+                          left: 10,
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                Validate.nullOrEmpty(
+                                        controller.dataMovie['title'])
+                                    ? controller.dataMovie['name']
+                                    : controller.dataMovie['title'],
+                                style: GoogleFonts.nunito(
+                                  color: Colors.white,
+                                  fontSize: 18,
                                 ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {},
+                              icon: Icon(
+                                Icons.favorite,
+                                color: Colors.white.withOpacity(0.7),
                               ),
                             ),
                           ],
                         ),
-                        Container(
-                          padding: EdgeInsets.only(
-                            left: 10,
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
+                      ),
+                      // dah muc phim
+                      Container(
+                        padding: EdgeInsets.only(left: 10),
+                        height: 30,
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: controller.listGenres.length,
+                          itemBuilder: (context, index) {
+                            final item = controller.listGenres[index];
+                            return Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 3,
+                              ),
+                              margin: EdgeInsets.only(right: 10),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20.0),
+                                color: Colors.grey,
+                              ),
+                              child: Center(
                                 child: Text(
-                                  Validate.nullOrEmpty(
-                                          controller.dataMovie['title'])
-                                      ? controller.dataMovie['name']
-                                      : controller.dataMovie['title'],
+                                  item['name'],
                                   style: GoogleFonts.nunito(
                                     color: Colors.white,
-                                    fontSize: 18,
                                   ),
-                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              IconButton(
-                                onPressed: () {},
-                                icon: Icon(
-                                  Icons.favorite,
-                                  color: Colors.white.withOpacity(0.7),
-                                ),
-                              ),
-                            ],
+                            );
+                          },
+                        ),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Divider(
+                        color: Colors.white.withOpacity(0.5),
+                      ),
+                      Container(
+                        padding: EdgeInsets.all(10.0),
+                        child: Text(
+                          controller.dataMovie['overview'],
+                          style: GoogleFonts.nunito(
+                            color: Colors.white,
+                            fontSize: 14,
                           ),
                         ),
-                        // dah muc phim
-                        Container(
-                          padding: EdgeInsets.only(left: 10),
-                          height: 30,
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            scrollDirection: Axis.horizontal,
-                            itemCount: controller.listGenres.length,
-                            itemBuilder: (context, index) {
-                              final item = controller.listGenres[index];
-                              return Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 3,
-                                ),
-                                margin: EdgeInsets.only(right: 10),
+                      ),
+                      Divider(
+                        color: Colors.white.withOpacity(0.5),
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(left: 10),
+                        child: Text(
+                          'Top Billed Cast',
+                          style: GoogleFonts.nunito(
+                            color: Colors.white,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        height: 200,
+                        padding: EdgeInsets.only(left: 10, top: 10),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: controller.listPoforMer.length,
+                          itemBuilder: (context, index) {
+                            final item = controller.listPoforMer[index];
+                            return GestureDetector(
+                              onTap: () {
+                                print(item['id']);
+                              },
+                              child: Container(
+                                margin: EdgeInsets.only(
+                                    right: Validate.nullOrEmpty(
+                                            item['profile_path'])
+                                        ? 0
+                                        : 10),
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  color: Colors.grey,
+                                  borderRadius: BorderRadius.circular(7.0),
                                 ),
-                                child: Center(
-                                  child: Text(
-                                    item['name'],
-                                    style: GoogleFonts.nunito(
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Divider(
-                          color: Colors.white.withOpacity(0.5),
-                        ),
-                        Container(
-                          padding: EdgeInsets.all(10.0),
-                          child: Text(
-                            controller.dataMovie['overview'],
-                            style: GoogleFonts.nunito(
-                              color: Colors.white,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                        Divider(
-                          color: Colors.white.withOpacity(0.5),
-                        ),
-                        Container(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Text(
-                            'Top Billed Cast',
-                            style: GoogleFonts.nunito(
-                              color: Colors.white,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          height: 200,
-                          padding: EdgeInsets.only(left: 10, top: 10),
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            scrollDirection: Axis.horizontal,
-                            itemCount: controller.listPoforMer.length,
-                            itemBuilder: (context, index) {
-                              final item = controller.listPoforMer[index];
-                              return GestureDetector(
-                                onTap: () {
-                                  print(item['id']);
-                                },
-                                child: Container(
-                                  margin: EdgeInsets.only(
-                                      right: Validate.nullOrEmpty(
-                                              item['profile_path'])
-                                          ? 0
-                                          : 10),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(7.0),
-                                  ),
-                                  child: Validate.nullOrEmpty(
-                                          item['profile_path'])
-                                      ? null
-                                      : Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Expanded(
-                                              child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(7.0),
-                                                child: Image.network(
-                                                  Temp.imageMovieDB(
-                                                          url: item[
-                                                              'profile_path'])
-                                                      .last,
-                                                  width: 100,
-                                                  fit: BoxFit.cover,
-                                                ),
+                                child: Validate.nullOrEmpty(
+                                        item['profile_path'])
+                                    ? null
+                                    : Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Expanded(
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(7.0),
+                                              child: Image.network(
+                                                Temp.imageMovieDB(
+                                                        url: item[
+                                                            'profile_path'])
+                                                    .last,
+                                                width: 100,
+                                                fit: BoxFit.cover,
                                               ),
                                             ),
-                                            SizedBox(
-                                              height: 5,
+                                          ),
+                                          SizedBox(
+                                            height: 5,
+                                          ),
+                                          Text(
+                                            Validate.nullOrEmpty(item['name'])
+                                                ? ''
+                                                : item['name'],
+                                            style: GoogleFonts.nunito(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w600,
                                             ),
-                                            Text(
-                                              Validate.nullOrEmpty(item['name'])
-                                                  ? ''
-                                                  : item['name'],
-                                              style: GoogleFonts.nunito(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ],
-                                        ),
-                                ),
-                              );
-                            },
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ],
+                                      ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Divider(
+                        color: Colors.white.withOpacity(0.5),
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(left: 10),
+                        child: Text(
+                          'Similar Movie',
+                          style: GoogleFonts.nunito(
+                            color: Colors.white,
+                            fontSize: 16,
                           ),
                         ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Divider(
-                          color: Colors.white.withOpacity(0.5),
-                        ),
-                        Container(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Text(
-                            'Similar Movie',
-                            style: GoogleFonts.nunito(
-                              color: Colors.white,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                       GridViewMovie(
-                        listData: controller.listSimilar,
-                        routes: '',
-                       )
-                      ],
-                    ),
+                      ),
+                     GridViewMovie(
+                      listData: controller.listSimilar,
+                      routes: '',
+                     )
+                    ],
                   ),
                 ),
-        );
-      },
-    );
+              );
   }
 
   ///

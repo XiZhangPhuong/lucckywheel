@@ -24,7 +24,21 @@ class Temp {
     '78044fe373msh16d923203b1b126p13ac57jsna27e7e74a932',
   ];
 
-  
+  ///
+  ///
+  ///
+  static  int randomIndex({required List<dynamic> data}){
+    return Random().nextInt(data.length-1);
+  }
+
+  ///
+  ///
+  ///
+  static int indexMovieTrailer({required List<dynamic> data}){
+     int index  = 0 ;
+     index = data.indexWhere((element) => element['type']=='Trailer');
+     return index == -1 ? 0 : index;  
+  }
 
  static String getRandomApiKey(List<String> apiKeyList) {
   if (apiKeyList.isEmpty) {

@@ -1,10 +1,13 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:luckywheel/base/listviewMovie.dart';
 import 'package:luckywheel/base/loading.dart';
 import 'package:luckywheel/helper/validate.dart';
+import 'package:luckywheel/routes/routes_path/movie_routes.dart';
 import 'package:luckywheel/screen/movie/movie_controller.dart';
 import 'package:luckywheel/temp.dart';
 import 'package:luckywheel/util/color_resources.dart';
@@ -29,230 +32,1221 @@ class MoviePage extends GetView<MovieController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _slideImage(controller),
-                  SizedBox(
-                    height: 15,
-                  ),
+                  // _slideImage(controller),
+                  _mathFootBall(controller),
+
                   // phim phổ biến
-                  Container(
-                    padding: EdgeInsets.only(
-                      left: 10,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Popular',
-                              style: GoogleFonts.nunito(
-                                fontSize: 18,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            IconButton(
-                              onPressed: () {},
-                              icon: Icon(
-                                Icons.keyboard_arrow_right_outlined,
-                                color: Colors.white,
-                                size: 30,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                          height: 300,
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            scrollDirection: Axis.horizontal,
-                            itemCount: controller.listPopuLarMovie.length,
-                            itemBuilder: (context, index) {
-                              final item = controller.listPopuLarMovie[index];
-                              return GestureDetector(
-                                onTap: () {
-                                  print(item['id']);
-                                  controller.gotoDetailAnime(id: item['id']);
-                                },
-                                child: Container(
-                                  width: 150,
-                                  margin: EdgeInsets.only(
-                                    right: 10,
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(5.0),
-                                        child: Image.network(
-                                          'https://image.tmdb.org/t/p/original${item['poster_path']}',
-                                          fit: BoxFit.cover,
-                                          width: 150,
-                                          height: 250,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 5,
-                                      ),
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.star,
-                                            color: Colors.yellow,
-                                            size: 20,
-                                          ),
-                                          SizedBox(
-                                            width: 5,
-                                          ),
-                                          Text(
-                                            Temp.convertVote(
-                                                item['vote_average']),
-                                            style: GoogleFonts.nunito(
-                                              color: Colors.white,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: 5,
-                                      ),
-                                      Text(
-                                        Validate.nullOrEmpty(item['title'])
-                                            ? item['name']
-                                            : item['title'],
-                                        style: GoogleFonts.nunito(
-                                          color: Colors.white,
-                                          fontSize: 14,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  //  _popuLarMovie(controller),
                   SizedBox(
                     height: 15,
                   ),
                   // đánh giá cao
-                  Container(
-                    padding: EdgeInsets.all(10.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Xếp hạng phổ biến',
-                          style: GoogleFonts.nunito(
-                            fontSize: 18,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                          height: 300,
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            scrollDirection: Axis.horizontal,
-                            itemCount: controller.listTopRatedMovie.length,
-                            itemBuilder: (context, index) {
-                              final item = controller.listTopRatedMovie[index];
-                              return GestureDetector(
-                                onTap: () {
-                                  print(item['id']);
-                                  controller.gotoDetailAnime(id: item['id']);
-                                },
-                                child: Container(
-                                  margin: EdgeInsets.only(
-                                    right: 10,
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(5.0),
-                                    child: Image.network(
-                                      'https://image.tmdb.org/t/p/original${item['poster_path']}',
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  _topRatedMovie(controller),
 
                   SizedBox(
                     height: 15,
                   ),
+                  // schedule word cup
+                  _scheduleWordCup(controller),
+                  SizedBox(
+                    height: 15,
+                  ),
                   // đang phát
-                  Container(
-                    padding: EdgeInsets.all(10.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Sắp diễn ra',
-                          style: GoogleFonts.nunito(
-                            fontSize: 18,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                          height: 300,
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            scrollDirection: Axis.horizontal,
-                            itemCount: controller.listNowPlayingMovie.length,
-                            itemBuilder: (context, index) {
-                              final item =
-                                  controller.listNowPlayingMovie[index];
-                              return GestureDetector(
-                                onTap: () {
-                                  print(item['id']);
-                                  controller.gotoDetailAnime(id: item['id']);
-                                },
-                                child: Container(
-                                  margin: EdgeInsets.only(
-                                    right: 10,
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(5.0),
-                                    child: Image.network(
-                                      'https://image.tmdb.org/t/p/original${item['poster_path']}',
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
+                  _upCommingMovie(controller),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  // team premier year
+                  _teamPremierYer(controller),
+
+                  SizedBox(
+                    height: 15,
+                  ),
+                  // Hentai Anime
+                  _hentaiAnime(controller),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  // schedule UEFA
+                  _scheduleUEFA(controller),
                 ],
               ),
             ),
           ),
         );
       },
+    );
+  }
+
+  ///
+  /// UEFA Champions League
+  ///
+  Widget _scheduleUEFA(MovieController controller) {
+    return controller.isLoadingUEFA == false
+        ? Container()
+        : Column(
+            children: [
+              Container(
+                padding: EdgeInsets.only(left: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '${controller.dataUEFA['competition']['name']} ${controller.dataUEFA['filters']['season']}',
+                      style: GoogleFonts.nunito(
+                        fontSize: 18,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {},
+                      icon: Icon(
+                        Icons.keyboard_arrow_right_outlined,
+                        color: Colors.white,
+                        size: 30,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                height: 150,
+                margin: EdgeInsets.only(top: 10),
+                padding: EdgeInsets.only(left: 10),
+                child: Center(
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    itemCount: controller.dataUEFA['resultSet']['count'],
+                    itemBuilder: (context, index) {
+                      final item = controller.dataUEFA['matches'][index];
+                      return GestureDetector(
+                        onTap: () {
+                          print(item['id']);
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(7.0),
+                          margin: EdgeInsets.only(right: 10),
+                          width: Get.width * 0.8,
+                          // height: 100,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(7.0),
+                            border: Border.all(width: 1, color: Colors.white38),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment
+                                .center, // Thêm này để căn giữa các widget trong cột
+                            children: [
+                              //
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.timelapse,
+                                    color: Colors.white,
+                                    size: 20,
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text(
+                                    Validate.nullOrEmpty(item['utcDate'])
+                                        ? ''
+                                        : Temp.convertUtcToVietnamTime(
+                                            item['utcDate']),
+                                    style: GoogleFonts.nunito(
+                                      fontSize: 14,
+                                      color: Colors.white,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 2,
+                                  ),
+                                  Spacer(),
+                                  Text(
+                                    Validate.nullOrEmpty(item['group'])
+                                        ? item['stage']
+                                        : item['group'],
+                                    style: GoogleFonts.nunito(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                    ),
+                                    //  overflow: TextOverflow.ellipsis,
+                                  )
+                                ],
+                              ),
+                              //
+                              Expanded(
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Validate.nullOrEmpty(
+                                                  item['homeTeam']['crest'])
+                                              ? Container(
+                                                  height: 50,
+                                                  width: 50,
+                                                )
+                                              : ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(7),
+                                                  child: item['homeTeam']
+                                                              ['crest']
+                                                          .toString()
+                                                          .endsWith('.png')
+                                                      ? Image.network(
+                                                          item['homeTeam']
+                                                              ['crest'],
+                                                          height: 50,
+                                                          width: 50,
+                                                          fit: BoxFit.cover,
+                                                        )
+                                                      : SvgPicture.network(
+                                                          item['homeTeam']
+                                                              ['crest'],
+                                                          height: 50,
+                                                          width: 50,
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                ),
+                                          SizedBox(height: 5.0),
+                                          Text(
+                                            Validate.nullOrEmpty(
+                                                    item['homeTeam']
+                                                        ['shortName'])
+                                                ? 'No name'
+                                                : item['homeTeam']['shortName'],
+                                            style: GoogleFonts.nunito(
+                                              fontSize: 14,
+                                              color: Colors.white,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              Validate.nullOrEmpty(item['score']
+                                                      ['fullTime']['home'])
+                                                  ? '-  -'
+                                                  : '${item['score']['fullTime']['home'].toString()} - ${item['score']['fullTime']['away']}',
+                                              style: GoogleFonts.nunito(
+                                                fontSize: 22,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 3,
+                                            ),
+                                            Validate.nullOrEmpty(
+                                                    item['score']['penalties'])
+                                                ? Text(
+                                                    'HT : '
+                                                    '${item['score']['halfTime']['home'].toString()} - ${item['score']['halfTime']['away']}',
+                                                    style: GoogleFonts.nunito(
+                                                      color: Colors.white,
+                                                      fontSize: 10,
+                                                    ),
+                                                  )
+                                                : Text(
+                                                    'Pen : '
+                                                    '${item['score']['penalties']['home'].toString()} - ${item['score']['penalties']['away']}',
+                                                    style: GoogleFonts.nunito(
+                                                      color: Colors.white,
+                                                      fontSize: 10,
+                                                    ),
+                                                  ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Validate.nullOrEmpty(
+                                                  item['awayTeam']['crest'])
+                                              ? Container(
+                                                  height: 50,
+                                                  width: 50,
+                                                )
+                                              : ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          7.0),
+                                                  child: item['awayTeam']
+                                                              ['crest']
+                                                          .toString()
+                                                          .endsWith('.png')
+                                                      ? Image.network(
+                                                          item['awayTeam']
+                                                              ['crest'],
+                                                          height: 50,
+                                                          width: 50,
+                                                        )
+                                                      : SvgPicture.network(
+                                                          item['awayTeam']
+                                                              ['crest'],
+                                                          height: 50,
+                                                          width: 50,
+                                                        ),
+                                                ),
+                                          SizedBox(height: 5.0),
+                                          Text(
+                                            Validate.nullOrEmpty(
+                                                    item['awayTeam']
+                                                        ['shortName'])
+                                                ? 'No name'
+                                                : item['awayTeam']['shortName'],
+                                            style: GoogleFonts.nunito(
+                                              fontSize: 14,
+                                              color: Colors.white,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 15,
+              ),
+            ],
+          );
+  }
+
+  ///
+  /// schedule Word cup
+  ///
+  Widget _scheduleWordCup(MovieController controller) {
+    return controller.isLoadingDataWordCup == false
+        ? Container()
+        : Column(
+            children: [
+              Container(
+                padding: EdgeInsets.only(left: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '${controller.dataWordCup['competition']['name']} ${controller.dataWordCup['filters']['season']}',
+                      style: GoogleFonts.nunito(
+                        fontSize: 18,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {},
+                      icon: Icon(
+                        Icons.keyboard_arrow_right_outlined,
+                        color: Colors.white,
+                        size: 30,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                height: 150,
+                margin: EdgeInsets.only(top: 10),
+                padding: EdgeInsets.only(left: 10),
+                child: Center(
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    itemCount: controller.dataWordCup['resultSet']['count'],
+                    itemBuilder: (context, index) {
+                      final item = controller.dataWordCup['matches'][index];
+                      return GestureDetector(
+                        onTap: () {
+                          print(item['id']);
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(7.0),
+                          margin: EdgeInsets.only(right: 10),
+                          width: Get.width * 0.8,
+                          // height: 100,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(7.0),
+                            border: Border.all(width: 1, color: Colors.white38),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment
+                                .center, // Thêm này để căn giữa các widget trong cột
+                            children: [
+                              //
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.timelapse,
+                                    color: Colors.white,
+                                    size: 20,
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text(
+                                    Validate.nullOrEmpty(item['utcDate'])
+                                        ? ''
+                                        : Temp.convertUtcToVietnamTime(
+                                            item['utcDate']),
+                                    style: GoogleFonts.nunito(
+                                      fontSize: 14,
+                                      color: Colors.white,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 2,
+                                  ),
+                                  Spacer(),
+                                  Text(
+                                    Validate.nullOrEmpty(item['group'])
+                                        ? item['stage']
+                                        : item['group'],
+                                    style: GoogleFonts.nunito(
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                ],
+                              ),
+                              //
+                              Expanded(
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Validate.nullOrEmpty(
+                                                  item['homeTeam']['crest'])
+                                              ? Container(
+                                                  height: 50,
+                                                  width: 50,
+                                                )
+                                              : ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(7),
+                                                  child: item['homeTeam']
+                                                              ['crest']
+                                                          .toString()
+                                                          .endsWith('.png')
+                                                      ? Image.network(
+                                                          item['homeTeam']
+                                                              ['crest'],
+                                                          height: 50,
+                                                          width: 50,
+                                                          fit: BoxFit.cover,
+                                                        )
+                                                      : SvgPicture.network(
+                                                          item['homeTeam']
+                                                              ['crest'],
+                                                          height: 50,
+                                                          width: 50,
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                ),
+                                          SizedBox(height: 5.0),
+                                          Text(
+                                            Validate.nullOrEmpty(
+                                                    item['homeTeam']
+                                                        ['shortName'])
+                                                ? 'No name'
+                                                : item['homeTeam']['shortName'],
+                                            style: GoogleFonts.nunito(
+                                              fontSize: 14,
+                                              color: Colors.white,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              Validate.nullOrEmpty(item['score']
+                                                      ['fullTime']['home'])
+                                                  ? '-  -'
+                                                  : '${item['score']['fullTime']['home'].toString()} - ${item['score']['fullTime']['away']}',
+                                              style: GoogleFonts.nunito(
+                                                fontSize: 22,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 3,
+                                            ),
+                                            Validate.nullOrEmpty(
+                                                    item['score']['penalties'])
+                                                ? Text(
+                                                    'HT : '
+                                                    '${item['score']['halfTime']['home'].toString()} - ${item['score']['halfTime']['away']}',
+                                                    style: GoogleFonts.nunito(
+                                                      color: Colors.white,
+                                                      fontSize: 10,
+                                                    ),
+                                                  )
+                                                : Text(
+                                                    'Pen : '
+                                                    '${item['score']['penalties']['home'].toString()} - ${item['score']['penalties']['away']}',
+                                                    style: GoogleFonts.nunito(
+                                                      color: Colors.white,
+                                                      fontSize: 10,
+                                                    ),
+                                                  ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Validate.nullOrEmpty(
+                                                  item['awayTeam']['crest'])
+                                              ? Container(
+                                                  height: 50,
+                                                  width: 50,
+                                                )
+                                              : ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          7.0),
+                                                  child: item['awayTeam']
+                                                              ['crest']
+                                                          .toString()
+                                                          .endsWith('.png')
+                                                      ? Image.network(
+                                                          item['awayTeam']
+                                                              ['crest'],
+                                                          height: 50,
+                                                          width: 50,
+                                                        )
+                                                      : SvgPicture.network(
+                                                          item['awayTeam']
+                                                              ['crest'],
+                                                          height: 50,
+                                                          width: 50,
+                                                        ),
+                                                ),
+                                          SizedBox(height: 5.0),
+                                          Text(
+                                            Validate.nullOrEmpty(
+                                                    item['awayTeam']
+                                                        ['shortName'])
+                                                ? 'No name'
+                                                : item['awayTeam']['shortName'],
+                                            style: GoogleFonts.nunito(
+                                              fontSize: 14,
+                                              color: Colors.white,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 15,
+              ),
+            ],
+          );
+  }
+
+  ///
+  /// teamPremier
+  ///
+  Column _teamPremierYer(MovieController controller) {
+    return Column(
+      children: [
+        Container(
+          padding: EdgeInsets.only(left: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Premier League ${DateTime.now().year}',
+                style: GoogleFonts.nunito(
+                  fontSize: 18,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              IconButton(
+                onPressed: () {},
+                icon: Icon(
+                  Icons.keyboard_arrow_right_outlined,
+                  color: Colors.white,
+                  size: 30,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Container(
+          height: 100,
+          margin: EdgeInsets.only(
+            left: 10,
+            top: 10,
+          ),
+          child: ListView.builder(
+            shrinkWrap: true,
+            scrollDirection: Axis.horizontal,
+            itemCount: controller.listTeamFootball.length,
+            itemBuilder: (context, index) {
+              final item = controller.listTeamFootball[index];
+              return GestureDetector(
+                onTap: () {
+                  print(item['id']);
+                  controller.showBottomSheet(url: item['website']);
+                },
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  margin: EdgeInsets.only(right: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(7.0),
+                    border: Border.all(width: 1, color: Colors.white24),
+                  ),
+                  width: Get.width * 0.3,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Validate.nullOrEmpty(item['crest'])
+                          ? Container()
+                          : item['crest'].toString().endsWith('.svg')
+                              ? SvgPicture.network(
+                                  item['crest'],
+                                  height: 50,
+                                  width: 50,
+                                )
+                              : Image.network(
+                                  item['crest'],
+                                  height: 50,
+                                  width: 50,
+                                ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        Validate.nullOrEmpty(item['shortName'])
+                            ? ''
+                            : item['shortName'],
+                        style: GoogleFonts.nunito(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      )
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  ///
+  /// hentai Anime
+  ///
+  Widget _hentaiAnime(MovieController controller) {
+    return Column(
+      children: [
+        Container(
+          padding: EdgeInsets.only(left: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Hentai Anime',
+                style: GoogleFonts.nunito(
+                  fontSize: 18,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              IconButton(
+                onPressed: () {},
+                icon: Icon(
+                  Icons.keyboard_arrow_right_outlined,
+                  color: Colors.white,
+                  size: 30,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Container(
+          height: 200,
+          padding: EdgeInsets.only(left: 10),
+          child: ListView.builder(
+            shrinkWrap: true,
+            scrollDirection: Axis.horizontal,
+            itemCount: controller.listAnime.length,
+            itemBuilder: (context, index) {
+              final item = controller.listAnime[index];
+              return GestureDetector(
+                onTap: () {
+                  controller.showBottomSheet(url: item['link']);
+                },
+                child: Container(
+                  width: 100,
+                  margin: EdgeInsets.only(right: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(5.0),
+                          child: Validate.nullOrEmpty(item['image'])
+                              ? Container()
+                              : Image.network(
+                                  item['image'],
+                                  width: 100,
+                                  fit: BoxFit.cover,
+                                ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        Validate.nullOrEmpty(item['title'])
+                            ? 'No name'
+                            : item['title'].toString(),
+                        style: GoogleFonts.nunito(
+                          color: Colors.white,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  ///
+  /// mathch Football
+  ///
+  Widget _mathFootBall(MovieController controller) {
+    return controller.listMatches.isEmpty
+        ? Container()
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: EdgeInsets.only(
+                  left: 10,
+                ),
+                child: Text(
+                  'Mathch Football',
+                  style: GoogleFonts.nunito(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              Container(
+                height: 150,
+                margin: EdgeInsets.only(top: 10),
+                padding: EdgeInsets.only(left: 10),
+                child: Center(
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    itemCount: controller.listMatches.length,
+                    itemBuilder: (context, index) {
+                      final item = controller.listMatches[index];
+                      return GestureDetector(
+                        onTap: () {
+                          print(item['id']);
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(7.0),
+                          margin: EdgeInsets.only(right: 10),
+                          width: Get.width * 0.8,
+                          // height: 100,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(7.0),
+                            border: Border.all(width: 1, color: Colors.white38),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment
+                                .center, // Thêm này để căn giữa các widget trong cột
+                            children: [
+                              //
+                              Row(
+                                children: [
+                                  Validate.nullOrEmpty(
+                                          item['competition']['emblem'])
+                                      ? Container()
+                                      : item['competition']['emblem']
+                                              .toString()
+                                              .endsWith('.png')
+                                          ? Image.network(
+                                              item['competition']['emblem'],
+                                              height: 30,
+                                              width: 30,
+                                            )
+                                          : SvgPicture.network(
+                                              item['competition']['emblem'],
+                                              height: 30,
+                                              width: 30,
+                                            ),
+                                  SizedBox(width: 5),
+                                  Text(
+                                    Validate.nullOrEmpty(
+                                            item['competition']['name'])
+                                        ? 'No name'
+                                        : item['competition']['name'],
+                                    style: GoogleFonts.nunito(
+                                      fontSize: 14,
+                                      color: Colors.white,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 2,
+                                  ),
+                                ],
+                              ),
+                              //
+                              Expanded(
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Validate.nullOrEmpty(
+                                                  item['homeTeam']['crest'])
+                                              ? Container(
+                                                  height: 50,
+                                                  width: 50,
+                                                )
+                                              : item['homeTeam']['crest']
+                                                      .toString()
+                                                      .endsWith('.png')
+                                                  ? Image.network(
+                                                      item['homeTeam']['crest'],
+                                                      height: 50,
+                                                      width: 50,
+                                                    )
+                                                  : SvgPicture.network(
+                                                      item['homeTeam']['crest'],
+                                                      height: 50,
+                                                      width: 50,
+                                                    ),
+                                          SizedBox(height: 5.0),
+                                          Text(
+                                            Validate.nullOrEmpty(
+                                                    item['homeTeam']
+                                                        ['shortName'])
+                                                ? 'No name'
+                                                : item['homeTeam']['shortName'],
+                                            style: GoogleFonts.nunito(
+                                              fontSize: 14,
+                                              color: Colors.white,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 2,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          Validate.nullOrEmpty(item['score']
+                                                  ['fullTime']['home'])
+                                              ? '-  -'
+                                              : '${item['score']['fullTime']['home'].toString()} - ${item['score']['fullTime']['away']}',
+                                          style: GoogleFonts.nunito(
+                                            fontSize: 22,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Validate.nullOrEmpty(
+                                                  item['awayTeam']['crest'])
+                                              ? Container(
+                                                  height: 50,
+                                                  width: 50,
+                                                )
+                                              : item['awayTeam']['crest']
+                                                      .toString()
+                                                      .endsWith('.png')
+                                                  ? Image.network(
+                                                      item['awayTeam']['crest'],
+                                                      height: 50,
+                                                      width: 50,
+                                                    )
+                                                  : SvgPicture.network(
+                                                      item['awayTeam']['crest'],
+                                                      height: 50,
+                                                      width: 50,
+                                                    ),
+                                          SizedBox(height: 5.0),
+                                          Text(
+                                            Validate.nullOrEmpty(
+                                                    item['awayTeam']
+                                                        ['shortName'])
+                                                ? 'No name'
+                                                : item['awayTeam']['shortName'],
+                                            style: GoogleFonts.nunito(
+                                              fontSize: 14,
+                                              color: Colors.white,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 2,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 15,
+              ),
+            ],
+          );
+  }
+
+  ///
+  /// upComming Movie
+  ///
+  Widget _upCommingMovie(MovieController controller) {
+    return Container(
+      padding: EdgeInsets.only(
+        left: 10,
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Upcomming Movie',
+              style: GoogleFonts.nunito(
+                fontSize: 18,
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.keyboard_arrow_right_outlined,
+                color: Colors.white,
+                size: 30,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        Container(
+          height: 300,
+          child: ListView.builder(
+            shrinkWrap: true,
+            scrollDirection: Axis.horizontal,
+            itemCount: controller.listNowPlayingMovie.length,
+            itemBuilder: (context, index) {
+              final item = controller.listNowPlayingMovie[index];
+              return GestureDetector(
+                onTap: () {
+                  print(item['id']);
+                  controller.showBottomSheetMovie(
+                      id: item['id'],
+                      context: context,
+                      media_type: Validate.nullOrEmpty(item['media_type'])
+                          ? 'movie'
+                          : item['media_type']);
+                },
+                child: Container(
+                  width: 150,
+                  margin: EdgeInsets.only(
+                    right: 10,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(5.0),
+                          child: Validate.nullOrEmpty(item['poster_path'])
+                              ? Container()
+                              : Image.network(
+                                  Temp.imageMovieDB(url: item['poster_path'])
+                                      .last,
+                                  fit: BoxFit.cover,
+                                  width: 150,
+                                  // height: 100,
+                                ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.star,
+                            color: Colors.yellow,
+                            size: 20,
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Text(
+                            Validate.nullOrEmpty(item['vote_average'])
+                                ? '0.0'
+                                : Temp.convertVote(item['vote_average']),
+                            style: GoogleFonts.nunito(
+                              color: Colors.white,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        Validate.nullOrEmpty(item['title']) &&
+                                Validate.nullOrEmpty(item['name'])
+                            ? 'No name'
+                            : Validate.nullOrEmpty(item['title'])
+                                ? item['name']
+                                : item['title'],
+                        style: GoogleFonts.nunito(
+                          color: Colors.white,
+                          fontSize: 14,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ]),
+    );
+  }
+
+  ///
+  /// top rated movie
+  ///
+  Widget _topRatedMovie(MovieController controller) {
+    return Container(
+      padding: EdgeInsets.only(
+        left: 10,
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Top Rated Movie',
+              style: GoogleFonts.nunito(
+                fontSize: 18,
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.keyboard_arrow_right_outlined,
+                color: Colors.white,
+                size: 30,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        Container(
+          height: 300,
+          child: ListView.builder(
+            shrinkWrap: true,
+            scrollDirection: Axis.horizontal,
+            itemCount: controller.listTopRatedMovie.length,
+            itemBuilder: (context, index) {
+              final item = controller.listTopRatedMovie[index];
+              return GestureDetector(
+                onTap: () {
+                  print(item['id']);
+                  controller.showBottomSheetMovie(
+                      id: item['id'],
+                      context: context,
+                      media_type: Validate.nullOrEmpty(item['media_type']) ? 'movie' : item['media_type']
+                      );
+                },
+                child: Container(
+                  width: 150,
+                  margin: EdgeInsets.only(
+                    right: 10,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(5.0),
+                          child: Validate.nullOrEmpty(item['poster_path'])
+                              ? Container()
+                              : Image.network(
+                                  Temp.imageMovieDB(url: item['poster_path'])
+                                      .last,
+                                  fit: BoxFit.cover,
+                                  width: 150,
+                                  // height: 100,
+                                ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.star,
+                            color: Colors.yellow,
+                            size: 20,
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Text(
+                            Validate.nullOrEmpty(item['vote_average'])
+                                ? '0.0'
+                                : Temp.convertVote(item['vote_average']),
+                            style: GoogleFonts.nunito(
+                              color: Colors.white,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        Validate.nullOrEmpty(item['title']) &&
+                                Validate.nullOrEmpty(item['name'])
+                            ? 'No name'
+                            : Validate.nullOrEmpty(item['title'])
+                                ? item['name']
+                                : item['title'],
+                        style: GoogleFonts.nunito(
+                          color: Colors.white,
+                          fontSize: 14,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ]),
+    );
+  }
+
+  ///
+  /// popular Movie
+  ///
+  Widget _popuLarMovie(MovieController controller) {
+    return PhuongListViewMovie(
+      listData: controller.listPopuLarMovie,
+      pageClickAll: '',
+      titleListView: 'Popular Movie',
+      pageItem: '',
+      valuePageClickAll: ['Popular Movie', 'popular'],
     );
   }
 

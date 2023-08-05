@@ -5,6 +5,7 @@ import 'package:luckywheel/screen/movie/detail_anime/detail_anime_page.dart';
 
 class MovieRoutes{
    static const String DETAIL_ANIME = '/detail_anime';
+   static const String VIEW_ALL_MOVIE = '/view_all_movie';
   static List<GetPage> list   =  [
      GetPage(
       name: DETAIL_ANIME,
@@ -13,5 +14,7 @@ class MovieRoutes{
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 500),
     ),
+
+   
   ];
 }

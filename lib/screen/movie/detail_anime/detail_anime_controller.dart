@@ -81,6 +81,7 @@ class DetailAnimeController extends GetxController {
 
   Future<void> _getVideoMovie() async {
     await _movieRepository.getAllVideoMovie(
+      media_type: '',
       id: id,
       onSuccess: (data) {
         listVideo = data;

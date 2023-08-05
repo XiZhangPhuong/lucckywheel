@@ -20,7 +20,7 @@ class MovieRepository{
     required Function(dynamic e) onError,
   }) async {
      try{
-       final response = await dio.get('https://anime-db.p.rapidapi.com/anime?page=${page}&size=${size}',options: option);
+       final response = await dio.get('https://anime-db.p.rapidapi.com/anime?page=${page}&size=${size}&genres=Hentai',options: option);
        if(response.statusCode==200){
          onSuccess(response.data['data']);
        }
@@ -28,6 +28,8 @@ class MovieRepository{
        onError(e);
      }
   }
+
+  
 
 ///
 /// get all genres
@@ -75,7 +77,7 @@ Future<void> getTopRatedMovie({
   required Function(dynamic e) onError,
 }) async {
   try{
-    final response  = await dio.get('https://api.themoviedb.org/3/movie/top_rated?api_key=${Temp.API_KEY_MOVIE}&language=en-ES&page=${page}');
+    final response  = await dio.get('https://api.themoviedb.org/3/movie/top_rated?api_key=${Temp.API_KEY_MOVIE}&language=vi-VN&page=${page}');
     if(response.statusCode==200){
       onSuccess(response.data['results']);
     }
@@ -93,7 +95,7 @@ Future<void> getNowPlaying({
   required Function(dynamic e) onError,
 }) async {
   try{
-    final response  = await dio.get('https://api.themoviedb.org/3/movie/upcoming?api_key=${Temp.API_KEY_MOVIE}&language=en-ES&page=${page}');
+    final response  = await dio.get('https://api.themoviedb.org/3/movie/upcoming?api_key=${Temp.API_KEY_MOVIE}&language=vi-VN&page=${page}');
     if(response.statusCode==200){
       onSuccess(response.data['results']);
     }
@@ -183,11 +185,12 @@ Future<void> getPoformerMovie({
 ///
 Future<void> getAllVideoMovie({
    required int id,
+   required String media_type,
    required Function(List<dynamic> data) onSuccess,
    required Function(dynamic e) onError,
 }) async {
    try{ 
-      final response = await dio.get('https://api.themoviedb.org/3/movie/${id}/videos?api_key=${Temp.API_KEY_MOVIE}');
+      final response = await dio.get('https://api.themoviedb.org/3/${media_type}/${id}/videos?api_key=${Temp.API_KEY_MOVIE}');
       if(response.statusCode==200){
         onSuccess(response.data['results']);
       }

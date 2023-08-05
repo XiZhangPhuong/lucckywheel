@@ -369,6 +369,7 @@ Widget _listViewFullScheDuleByTeam(HomeController controller) {
                     ),
                   ],
                 ),
+            
               ),
             );
           },
