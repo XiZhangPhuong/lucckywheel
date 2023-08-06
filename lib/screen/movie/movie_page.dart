@@ -40,17 +40,20 @@ class MoviePage extends GetView<MovieController> {
                   SizedBox(
                     height: 15,
                   ),
+
                   // đánh giá cao
                   _topRatedMovie(controller),
 
                   SizedBox(
                     height: 15,
                   ),
+
                   // schedule word cup
                   _scheduleWordCup(controller),
                   SizedBox(
                     height: 15,
                   ),
+
                   // đang phát
                   _upCommingMovie(controller),
                   SizedBox(
@@ -62,13 +65,21 @@ class MoviePage extends GetView<MovieController> {
                   SizedBox(
                     height: 15,
                   ),
+
                   // Hentai Anime
                   _hentaiAnime(controller),
                   SizedBox(
                     height: 15,
                   ),
+
                   // schedule UEFA
                   _scheduleUEFA(controller),
+                  SizedBox(
+                    height: 15,
+                  ),
+
+                  // airning today tv
+                  _AirNingToDayTV(controller),
                 ],
               ),
             ),
@@ -387,6 +398,7 @@ class MoviePage extends GetView<MovieController> {
                       return GestureDetector(
                         onTap: () {
                           print(item['id']);
+                          controller.showBottomSheetFootBall(idMatch: item['id'], item: item, context: context);
                         },
                         child: Container(
                           padding: EdgeInsets.all(7.0),
@@ -605,96 +617,98 @@ class MoviePage extends GetView<MovieController> {
   ///
   /// teamPremier
   ///
-  Column _teamPremierYer(MovieController controller) {
-    return Column(
-      children: [
-        Container(
-          padding: EdgeInsets.only(left: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget _teamPremierYer(MovieController controller) {
+    return controller.isLoadingTeamFootball == false
+        ? Container()
+        : Column(
             children: [
-              Text(
-                'Premier League ${DateTime.now().year}',
-                style: GoogleFonts.nunito(
-                  fontSize: 18,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
+              Container(
+                padding: EdgeInsets.only(left: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Premier League ${DateTime.now().year}',
+                      style: GoogleFonts.nunito(
+                        fontSize: 18,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {},
+                      icon: Icon(
+                        Icons.keyboard_arrow_right_outlined,
+                        color: Colors.white,
+                        size: 30,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.keyboard_arrow_right_outlined,
-                  color: Colors.white,
-                  size: 30,
+              Container(
+                height: 100,
+                margin: EdgeInsets.only(
+                  left: 10,
+                  top: 10,
+                ),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: controller.listTeamFootball.length,
+                  itemBuilder: (context, index) {
+                    final item = controller.listTeamFootball[index];
+                    return GestureDetector(
+                      onTap: () {
+                        print(item['id']);
+                        controller.showBottomSheetAnime(url: item['website']);
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        margin: EdgeInsets.only(right: 10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(7.0),
+                          border: Border.all(width: 1, color: Colors.white24),
+                        ),
+                        width: Get.width * 0.3,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Validate.nullOrEmpty(item['crest'])
+                                ? Container()
+                                : item['crest'].toString().endsWith('.svg')
+                                    ? SvgPicture.network(
+                                        item['crest'],
+                                        height: 50,
+                                        width: 50,
+                                      )
+                                    : Image.network(
+                                        item['crest'],
+                                        height: 50,
+                                        width: 50,
+                                      ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              Validate.nullOrEmpty(item['shortName'])
+                                  ? ''
+                                  : item['shortName'],
+                              style: GoogleFonts.nunito(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
             ],
-          ),
-        ),
-        Container(
-          height: 100,
-          margin: EdgeInsets.only(
-            left: 10,
-            top: 10,
-          ),
-          child: ListView.builder(
-            shrinkWrap: true,
-            scrollDirection: Axis.horizontal,
-            itemCount: controller.listTeamFootball.length,
-            itemBuilder: (context, index) {
-              final item = controller.listTeamFootball[index];
-              return GestureDetector(
-                onTap: () {
-                  print(item['id']);
-                  controller.showBottomSheet(url: item['website']);
-                },
-                child: Container(
-                  padding: EdgeInsets.all(10),
-                  margin: EdgeInsets.only(right: 10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(7.0),
-                    border: Border.all(width: 1, color: Colors.white24),
-                  ),
-                  width: Get.width * 0.3,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Validate.nullOrEmpty(item['crest'])
-                          ? Container()
-                          : item['crest'].toString().endsWith('.svg')
-                              ? SvgPicture.network(
-                                  item['crest'],
-                                  height: 50,
-                                  width: 50,
-                                )
-                              : Image.network(
-                                  item['crest'],
-                                  height: 50,
-                                  width: 50,
-                                ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        Validate.nullOrEmpty(item['shortName'])
-                            ? ''
-                            : item['shortName'],
-                        style: GoogleFonts.nunito(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      )
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
-    );
+          );
   }
 
   ///
@@ -740,7 +754,7 @@ class MoviePage extends GetView<MovieController> {
               final item = controller.listAnime[index];
               return GestureDetector(
                 onTap: () {
-                  controller.showBottomSheet(url: item['link']);
+                  controller.showBottomSheetAnime(url: item['link']);
                 },
                 child: Container(
                   width: 100,
@@ -820,8 +834,10 @@ class MoviePage extends GetView<MovieController> {
                       return GestureDetector(
                         onTap: () {
                           print(item['id']);
+                          controller.showBottomSheetFootBall(idMatch: item['id'], item: item, context: context);
                         },
-                        child: Container(
+                        child:
+                         Container(
                           padding: EdgeInsets.all(7.0),
                           margin: EdgeInsets.only(right: 10),
                           width: Get.width * 0.8,
@@ -978,6 +994,7 @@ class MoviePage extends GetView<MovieController> {
                             ],
                           ),
                         ),
+                     
                       );
                     },
                   ),
@@ -1116,6 +1133,131 @@ class MoviePage extends GetView<MovieController> {
   }
 
   ///
+  /// upComming Movie
+  ///
+  Widget _AirNingToDayTV(MovieController controller) {
+    return Container(
+      padding: EdgeInsets.only(
+        left: 10,
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Airning Today TV',
+              style: GoogleFonts.nunito(
+                fontSize: 18,
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.keyboard_arrow_right_outlined,
+                color: Colors.white,
+                size: 30,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        Container(
+          height: 300,
+          child: ListView.builder(
+            shrinkWrap: true,
+            scrollDirection: Axis.horizontal,
+            itemCount: controller.listAriningToday.length,
+            itemBuilder: (context, index) {
+              final item = controller.listAriningToday[index];
+              return GestureDetector(
+                onTap: () {
+                  print(item['id']);
+                  controller.showBottomSheetMovie(
+                      id: item['id'],
+                      context: context,
+                      media_type: Validate.nullOrEmpty(item['media_type'])
+                          ? 'movie'
+                          : item['media_type']);
+                },
+                child: Container(
+                  width: 150,
+                  margin: EdgeInsets.only(
+                    right: 10,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(5.0),
+                          child: Validate.nullOrEmpty(item['poster_path'])
+                              ? Container()
+                              : Image.network(
+                                  Temp.imageMovieDB(url: item['poster_path'])
+                                      .last,
+                                  fit: BoxFit.cover,
+                                  width: 150,
+                                  // height: 100,
+                                ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.star,
+                            color: Colors.yellow,
+                            size: 20,
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Text(
+                            Validate.nullOrEmpty(item['vote_average'])
+                                ? '0.0'
+                                : Temp.convertVote(item['vote_average']),
+                            style: GoogleFonts.nunito(
+                              color: Colors.white,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        Validate.nullOrEmpty(item['title']) &&
+                                Validate.nullOrEmpty(item['name'])
+                            ? 'No name'
+                            : Validate.nullOrEmpty(item['title'])
+                                ? item['name']
+                                : item['title'],
+                        style: GoogleFonts.nunito(
+                          color: Colors.white,
+                          fontSize: 14,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ]),
+    );
+  }
+
+  ///
   /// top rated movie
   ///
   Widget _topRatedMovie(MovieController controller) {
@@ -1162,8 +1304,9 @@ class MoviePage extends GetView<MovieController> {
                   controller.showBottomSheetMovie(
                       id: item['id'],
                       context: context,
-                      media_type: Validate.nullOrEmpty(item['media_type']) ? 'movie' : item['media_type']
-                      );
+                      media_type: Validate.nullOrEmpty(item['media_type'])
+                          ? 'movie'
+                          : item['media_type']);
                 },
                 child: Container(
                   width: 150,

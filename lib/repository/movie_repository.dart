@@ -163,6 +163,26 @@ Future<void> getTrendingTVByWeek({
 }
 
 ///
+/// lấy danh sách chương trình phat sóng hôm nay  
+///
+Future<void> getAiringToday({
+   required int page,
+   String? language,
+   required Function(List<dynamic> data) onSuccess,
+   required Function(dynamic e) onError,
+}) async {
+
+  try{
+     final response = await dio.get('https://api.themoviedb.org/3/tv/airing_today?language=vi-VN&api_key=${Temp.API_KEY_MOVIE}&page=${page}');
+     if(response.statusCode==200){
+       onSuccess(response.data['results']);
+     }
+  }catch(e){
+     onError(e);
+  }
+}
+
+///
 /// lấy danh sách tất cả các diễn viên của phim 
 ///
 Future<void> getPoformerMovie({

@@ -156,7 +156,7 @@ class FoodBallRespository {
           options: options);
       if (response.statusCode == 200) {
         final resuilt = response.data as dynamic;
-        onSuccess(MatchDetailResponse.fromMap(resuilt));
+        onSuccess(resuilt);
       }
     } catch (e) {
       onError(e);

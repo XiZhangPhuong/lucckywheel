@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:luckywheel/base/loading.dart';
@@ -51,6 +52,10 @@ class MovieController extends GetxController {
   List<dynamic> listNowPlayingMovie = [];
   bool isLoadingNowPlaying = false;
 
+  // get airning tv todat
+  List<dynamic> listAriningToday = [];
+  bool isLoadingArirningToday = false;
+
   // get maches todya
   List<dynamic> listMatches = [];
   bool isLoadingMatches = false;
@@ -73,6 +78,10 @@ class MovieController extends GetxController {
   bool isLoadingVideoMovie = false;
   int id = 0;
 
+  // get mathch detail
+  dynamic dataMathchDetail = null;
+  bool isLoadingDataMathDetail = false;
+
   @override
   void onInit() {
     super.onInit();
@@ -85,6 +94,7 @@ class MovieController extends GetxController {
     _getAllTeamFootBall();
     _getDataWordCup();
     _getDataUEFA();
+    _getAirninToDayTV();
   }
 
   @override
@@ -147,8 +157,24 @@ class MovieController extends GetxController {
       page: 1,
       onSuccess: (data) {
         listNowPlayingMovie = data;
-        listNowPlayingMovie.shuffle();
         isLoadingNowPlaying = true;
+        update();
+      },
+      onError: (e) {
+        print(e);
+      },
+    );
+  }
+
+  ///
+  /// get airning tv today
+  ///
+  Future<void> _getAirninToDayTV() async {
+    await _movieRepository.getAiringToday(
+      page: 1,
+      onSuccess: (data) {
+        listAriningToday = data;
+        isLoadingArirningToday = true;
         update();
       },
       onError: (e) {
@@ -207,7 +233,7 @@ class MovieController extends GetxController {
   ///
   /// go to hentai anime
   ///
-  void gotoHentaiAnime(){
+  void gotoHentaiAnime() {
     Get.toNamed(MovieRoutes.ANIME);
   }
 
@@ -298,7 +324,8 @@ class MovieController extends GetxController {
   ///
   /// get all video movie
   ///
-  Future<void> getAllVideoMovie({required int id,required String media_type}) async {
+  Future<void> getAllVideoMovie(
+      {required int id, required String media_type}) async {
     await _movieRepository.getAllVideoMovie(
       media_type: media_type,
       id: id,
@@ -313,19 +340,20 @@ class MovieController extends GetxController {
     );
   }
 
- 
   ///
   /// show bottot sheet team football by id
   ///
   Future<void> showBottomSheetMovie(
-      {required int id,required BuildContext context,required String media_type}) async {
+      {required int id,
+      required BuildContext context,
+      required String media_type}) async {
     showDialog(
       context: context,
       barrierDismissible:
           false, // Đảm bảo dialog không thể đóng khi bấm ra ngoài
       builder: (context) => LoadingIndicator(),
     );
-    await getAllVideoMovie(id: id,media_type: media_type);
+    await getAllVideoMovie(id: id, media_type: media_type);
     Get.back();
     Get.bottomSheet(
       Container(
@@ -348,21 +376,669 @@ class MovieController extends GetxController {
                       'No data',
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.black,
+                        color: Colors.white,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
       ),
-      backgroundColor: Colors.transparent,
+      backgroundColor: ColorResources.BACKGROUND,
       isScrollControlled: true,
+    );
+  }
+
+  ///
+  /// get detail match by id
+  ///
+  Future<void> _getDetalMathchByID({required int idMathch}) async {
+    await _foodBallRespository.getMatchDetail(
+      id: idMathch,
+      onSuccess: (data) {
+        dataMathchDetail = data;
+        isLoadingDataMathDetail = true;
+        update();
+      },
+      onError: (e) {
+        print(e);
+      },
+    );
+  }
+
+  ///
+  /// show bottom sheet foot ball
+  ///
+  Future<void> showBottomSheetFootBall(
+      {required int idMatch,
+      required dynamic item,
+      required BuildContext context}) async {
+    showDialog(
+      context: context,
+      barrierDismissible:
+          false, // Đảm bảo dialog không thể đóng khi bấm ra ngoài
+      builder: (context) => LoadingIndicator(),
+    );
+    await _getDetalMathchByID(idMathch: idMatch);
+    Get.back();
+    Get.bottomSheet(
+      isScrollControlled: true,
+      backgroundColor: ColorResources.BACKGROUND,
+      Container(
+        height: Get.height * 0.8,
+        padding: EdgeInsets.all(10.0),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              //
+              Row(
+                children: [
+                  Container(
+                    child: Validate.nullOrEmpty(item['area']['flag'])
+                        ? Container()
+                        : item['area']['flag'].toString().endsWith('.png')
+                            ? Image.network(
+                                item['area']['flag'],
+                                height: 30,
+                                width: 30,
+                                fit: BoxFit.cover,
+                              )
+                            : SvgPicture.network(
+                                item['area']['flag'],
+                                height: 30,
+                                width: 30,
+                                fit: BoxFit.cover,
+                              ),
+                  ),
+                  SizedBox(width: 5),
+                  Text(
+                    Validate.nullOrEmpty(item['competition']['name'])
+                        ? 'No name'
+                        : item['competition']['name'],
+                    style: GoogleFonts.nunito(
+                      fontSize: 14,
+                      color: Colors.white,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                  ),
+                  Spacer(),
+                  Container(
+                    child: Validate.nullOrEmpty(item['area']['flag'])
+                        ? Container()
+                        : item['area']['flag'].toString().endsWith('.png')
+                            ? Image.network(
+                                item['area']['flag'],
+                                height: 30,
+                                width: 30,
+                                fit: BoxFit.cover,
+                              )
+                            : SvgPicture.network(
+                                item['area']['flag'],
+                                height: 30,
+                                width: 30,
+                                fit: BoxFit.cover,
+                              ),
+                  ),
+                  SizedBox(width: 5),
+                  Text(
+                    Validate.nullOrEmpty(item['area']['name'])
+                        ? 'No name'
+                        : item['area']['name'],
+                    style: GoogleFonts.nunito(
+                      fontSize: 14,
+                      color: Colors.white,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                  ),
+                ],
+              ),
+              //
+              SizedBox(
+                height: 15,
+              ),
+        
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Validate.nullOrEmpty(item['homeTeam']['crest'])
+                            ? Container(
+                                height: 50,
+                                width: 50,
+                              )
+                            : item['homeTeam']['crest']
+                                    .toString()
+                                    .endsWith('.png')
+                                ? Image.network(
+                                    item['homeTeam']['crest'],
+                                    height: 50,
+                                    width: 50,
+                                    fit: BoxFit.cover,
+                                  )
+                                : SvgPicture.network(
+                                    item['homeTeam']['crest'],
+                                    height: 50,
+                                    width: 50,
+                                    fit: BoxFit.cover,
+                                  ),
+                        SizedBox(height: 5.0),
+                        Text(
+                          Validate.nullOrEmpty(item['homeTeam']['shortName'])
+                              ? 'No name'
+                              : item['homeTeam']['shortName'],
+                          style: GoogleFonts.nunito(
+                            fontSize: 14,
+                            color: Colors.white,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: Text(
+                        Validate.nullOrEmpty(item['score']['fullTime']['home'])
+                            ? '-  -'
+                            : '${item['score']['fullTime']['home'].toString()} - ${item['score']['fullTime']['away']}',
+                        style: GoogleFonts.nunito(
+                          fontSize: 22,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Validate.nullOrEmpty(item['awayTeam']['crest'])
+                            ? Container(
+                                height: 50,
+                                width: 50,
+                              )
+                            : item['awayTeam']['crest']
+                                    .toString()
+                                    .endsWith('.png')
+                                ? Image.network(
+                                    item['awayTeam']['crest'],
+                                    height: 50,
+                                    width: 50,
+                                    fit: BoxFit.cover,
+                                  )
+                                : SvgPicture.network(
+                                    item['awayTeam']['crest'],
+                                    height: 50,
+                                    width: 50,
+                                    fit: BoxFit.cover,
+                                  ),
+                        SizedBox(height: 5.0),
+                        Text(
+                          Validate.nullOrEmpty(item['awayTeam']['shortName'])
+                              ? 'No name'
+                              : item['awayTeam']['shortName'],
+                          style: GoogleFonts.nunito(
+                            fontSize: 14,
+                            color: Colors.white,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Divider(
+                color: Colors.white30,
+              ),
+              //
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                children: [
+                  Icon(
+                    Icons.timer_outlined,
+                    color: Colors.white,
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    Validate.nullOrEmpty(item['utcDate'])
+                        ? 'No data'
+                        : Temp.convertUtcToVietnamTime(item['utcDate']),
+                    style: GoogleFonts.nunito(
+                      color: Colors.white,
+                    ),
+                  ),
+                  Spacer(),
+                  Icon(
+                    Icons.stadium_outlined,
+                    color: Colors.white,
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    Validate.nullOrEmpty(item['venue'])
+                        ? 'No data'
+                        : Temp.convertUtcToVietnamTime(item['venue']),
+                    style: GoogleFonts.nunito(
+                      color: Colors.white,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                  ),
+                ],
+              ),
+        
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                children: [
+                  Icon(
+                    Icons.timeline_outlined,
+                    color: Colors.white,
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    Validate.nullOrEmpty(item['matchday'])
+                        ? 'No data'
+                        : item['matchday'].toString(),
+                    style: GoogleFonts.nunito(
+                      color: Colors.white,
+                    ),
+                  ),
+                  Spacer(),
+                  Icon(
+                    Icons.rounded_corner_outlined,
+                    color: Colors.white,
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    Validate.nullOrEmpty(item['stage'])
+                        ? 'No data'
+                        : item['stage'],
+                    style: GoogleFonts.nunito(
+                      color: Colors.white,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                  ),
+                ],
+              ),
+        
+              SizedBox(
+                height: 10,
+              ),
+              Validate.nullOrEmpty(item['referees'])
+                  ? Container()
+                  : Row(
+                      children: [
+                        Icon(
+                          Icons.person_outline,
+                          color: Colors.white,
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          Validate.nullOrEmpty(item['referees'][0]['name'])
+                              ? 'No data'
+                              : item['referees'][0]['name'].toString(),
+                          style: GoogleFonts.nunito(
+                            color: Colors.white,
+                          ),
+                        ),
+                        Spacer(),
+                        Icon(
+                          Icons.flag_outlined,
+                          color: Colors.white,
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          Validate.nullOrEmpty(item['referees'][0]['nationality'])
+                              ? 'No data'
+                              : item['referees'][0]['nationality'].toString(),
+                          style: GoogleFonts.nunito(
+                            color: Colors.white,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                        ),
+                      ],
+                    ),
+              SizedBox(
+                height: 10,
+              ),
+              Divider(
+                color: Colors.white30,
+              ),
+              SizedBox(
+                height: 5,
+              ),
+        
+              Text(
+                'Odds : ',
+                style: GoogleFonts.nunito(
+                  color: Colors.white,
+                  fontSize: 16,
+                ),
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    height: 15,
+                    width: 10,
+                    color: Colors.blue,
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    Validate.nullOrEmpty(item['odds']['homeWin'])
+                        ? '0'
+                        : item['odds']['homeWin'].toString(),
+                    style: GoogleFonts.nunito(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Spacer(),
+                  Container(
+                    height: 15,
+                    width: 10,
+                    color: Colors.yellowAccent,
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    Validate.nullOrEmpty(item['odds']['draw'])
+                        ? '0'
+                        : item['odds']['draw'].toString(),
+                    style: GoogleFonts.nunito(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Spacer(),
+                  Container(
+                    height: 15,
+                    width: 10,
+                    color: Colors.red,
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    Validate.nullOrEmpty(item['odds']['awayWin'])
+                        ? '0'
+                        : item['odds']['awayWin'].toString(),
+                    style: GoogleFonts.nunito(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Divider(
+                color: Colors.white30,
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              Text(
+                'Note : ',
+                style: GoogleFonts.nunito(
+                  color: Colors.white,
+                  fontSize: 16,
+                ),
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              Row(
+                children: [
+                  Icon(
+                    Icons.timer_outlined,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    'UTC Date',
+                    style: GoogleFonts.nunito(
+                      color: Colors.white,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              Row(
+                children: [
+                  Icon(
+                    Icons.stadium_outlined,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    'Stadium',
+                    style: GoogleFonts.nunito(
+                      color: Colors.white,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              Row(
+                children: [
+                  Icon(
+                    Icons.timeline_outlined,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    'MathchDay',
+                    style: GoogleFonts.nunito(
+                      color: Colors.white,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              Row(
+                children: [
+                  Icon(
+                    Icons.rounded_corner_outlined,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    'Stage',
+                    style: GoogleFonts.nunito(
+                      color: Colors.white,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              Row(
+                children: [
+                  Icon(
+                    Icons.person_outlined,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    'Referees',
+                    style: GoogleFonts.nunito(
+                      color: Colors.white,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              Row(
+                children: [
+                  Icon(
+                    Icons.flag_outlined,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    'Nationality',
+                    style: GoogleFonts.nunito(
+                      color: Colors.white,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              Container(
+                padding: EdgeInsets.only(left: 5),
+                child: Row(
+                  children: [
+                    Container(
+                      height: 15,
+                      width: 10,
+                      color: Colors.blue,
+                    ),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    Text(
+                      'Home Win',
+                      style: GoogleFonts.nunito(
+                        color: Colors.white,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+               SizedBox(
+                height: 5,
+              ),
+               Container(
+                padding: EdgeInsets.only(left: 5),
+                child: Row(
+                  children: [
+                    Container(
+                      height: 15,
+                      width: 10,
+                      color: Colors.yellowAccent,
+                    ),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    Text(
+                      'Draw',
+                      style: GoogleFonts.nunito(
+                        color: Colors.white,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+               SizedBox(
+                height: 5,
+              ),
+               Container(
+                padding: EdgeInsets.only(left: 5),
+                child: Row(
+                  children: [
+                    Container(
+                      height: 15,
+                      width: 10,
+                      color: Colors.red,
+                    ),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    Text(
+                      'Away Win',
+                      style: GoogleFonts.nunito(
+                        color: Colors.white,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
   ///
   /// show bottot sheet team football by id
   ///
-  void showBottomSheet({required String url}) {
+  void showBottomSheetAnime({required String url}) {
     Get.bottomSheet(
       Container(
         height: Get.height * 0.9,
