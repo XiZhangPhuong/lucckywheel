@@ -6,6 +6,7 @@ import 'package:luckywheel/screen/dashboard/dashboard_controller.dart';
 import 'package:luckywheel/screen/football/football_page.dart';
 import 'package:luckywheel/screen/home/home_page.dart';
 import 'package:luckywheel/screen/movie/movie_page.dart';
+import 'package:luckywheel/screen/service/service_page.dart';
 import 'package:luckywheel/util/color_resources.dart';
 
 class DashBoardPage extends GetView<DashBoardController> {
@@ -25,7 +26,7 @@ class DashBoardPage extends GetView<DashBoardController> {
             children: [
               HomePage(),
               BloggerPage(),
-              MoviePage()
+              ServicePage(),
               
             ],
           ),
