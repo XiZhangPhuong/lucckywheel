@@ -135,6 +135,7 @@ class MoviePage extends GetView<MovieController> {
                       return GestureDetector(
                         onTap: () {
                           print(item['id']);
+                          controller.showBottomSheetFootBall(idMatch: item['id'], item: item, context: context);
                         },
                         child: Container(
                           padding: EdgeInsets.all(7.0),

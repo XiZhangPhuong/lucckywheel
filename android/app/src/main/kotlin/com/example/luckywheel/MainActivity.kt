@@ -1,4 +1,4 @@
-package com.example.jangsport
+package com.example.jangtv
 
 import io.flutter.embedding.android.FlutterActivity
 

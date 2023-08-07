@@ -426,6 +426,7 @@ class MovieController extends GetxController {
         height: Get.height * 0.8,
         padding: EdgeInsets.all(10.0),
         child: SingleChildScrollView(
+          physics: const NeverScrollableScrollPhysics(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
