@@ -14,7 +14,8 @@ import 'package:html/dom.dart';
 class Temp {
   static const String APIKEY = 'AdxWlOA2vYhQgmLcgEL0Ob19F6FhdDEoOriYcvAM';
   static const String TOKEN_FOOTBALL = 'bf06f621ea86471ca38da14b906baaec';
-  static const String APIKEY_BLOGGER = 'AIzaSyClkPA7IDNuoQHM27nTbEJyPIm0AIrcFFM';
+  static const String APIKEY_BLOGGER =
+      'AIzaSyClkPA7IDNuoQHM27nTbEJyPIm0AIrcFFM';
   static const String BLOGGER_ID = '5346074296323457457';
   static const String API_KEY_MOVIE = 'c00bdea57d0592fe97feeaace5870900';
   static const List<String> apiKEY_ANIME = [
@@ -24,19 +25,17 @@ class Temp {
     '78044fe373msh16d923203b1b126p13ac57jsna27e7e74a932',
   ];
 
-  
-
- static String getRandomApiKey(List<String> apiKeyList) {
-  if (apiKeyList.isEmpty) {
-    throw Exception("Danh sách API key là rỗng.");
+  static String getRandomApiKey(List<String> apiKeyList) {
+    if (apiKeyList.isEmpty) {
+      throw Exception("Danh sách API key là rỗng.");
+    }
+    int randomIndex = Random().nextInt(apiKeyList.length);
+    return apiKeyList[randomIndex];
   }
-  int randomIndex = Random().nextInt(apiKeyList.length);
-  return apiKeyList[randomIndex];
-}
 
 ////
   /// convertUtcToVietnamTime
-  /// 
+  ///
   static String convertUtcToVietnamTime(String utcDateTime) {
     final utc = DateTime.parse(utcDateTime).toUtc();
     final vietnamTime = utc.add(Duration(hours: 7));
@@ -101,17 +100,36 @@ class Temp {
     return false;
   }
 
-
- ///
-/// custom ADS
-///
-static Widget _customADS({String? url}){
-  return Container(
-    child: CachedNetworkImage(
-        imageUrl: url ?? 'https://i.imgur.com/NC96MeM.gif',     
-        placeholder: (context, url) => Container(color: ColorResources.BACKGROUND,),
+  ///
+  /// custom ADS
+  ///
+  static Widget _customADS({String? url}) {
+    return Container(
+      child: CachedNetworkImage(
+        imageUrl: url ?? 'https://i.imgur.com/NC96MeM.gif',
+        placeholder: (context, url) => Container(
+          color: ColorResources.BACKGROUND,
+        ),
         errorWidget: (context, url, error) => Icon(Icons.error),
       ),
-  );
-} 
+    );
+  }
+
+  ///
+  /// cnvert time
+  ///
+
+  static String intToTimeLeft(int value) {
+    int h, m, s;
+
+    h = value ~/ 3600;
+
+    m = ((value - h * 3600)) ~/ 60;
+
+    s = value - (h * 3600) - (m * 60);
+
+    String result = "$h:$m";
+
+    return result;
+  }
 }
