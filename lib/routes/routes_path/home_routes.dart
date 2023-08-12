@@ -9,6 +9,8 @@ import 'package:luckywheel/screen/football/football_page.dart';
 import 'package:luckywheel/screen/home/home_binding.dart';
 import 'package:luckywheel/screen/match_detail/match_detail_binding.dart';
 import 'package:luckywheel/screen/match_detail/match_detail_page.dart';
+import 'package:luckywheel/screen/newspaper/newspaper_binding.dart';
+import 'package:luckywheel/screen/newspaper/newspaper_page.dart';
 import 'package:luckywheel/screen/team/team_binding.dart';
 import 'package:luckywheel/screen/team/team_page.dart';
 
@@ -30,6 +32,7 @@ class HomeRoutes {
   static const String VIDEOS = '/videos';
   static const String TEAM = '/team';
   static const String MATCH_DETAIL = '/match_detail';
+
   static List<GetPage> list = [
     GetPage(
       name: HOME,
@@ -66,6 +69,13 @@ class HomeRoutes {
       name: MATCH_DETAIL,
       page: () => const MatchDetailpage(),
       binding: MatchDetailBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 500),
+    ),
+     GetPage(
+      name: NEWSPAPER,
+      page: () => const NewSpaperPage(),
+      binding: NewSpaperBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 500),
     ),

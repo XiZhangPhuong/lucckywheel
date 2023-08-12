@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget  {
       theme: ThemeData(primarySwatch: Colors.blue),
       debugShowCheckedModeBanner: false,
       getPages: AppPages.list,
-      initialRoute: HomeRoutes.DASHBOARD,
+      initialRoute: HomeRoutes.NEWSPAPER,
       supportedLocales: const [
         Locale('vi', 'VN'),
         Locale('en', 'US'),
