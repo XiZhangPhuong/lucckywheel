@@ -1,16 +1,8 @@
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:get/get_navigation/src/routes/transitions_type.dart';
-import 'package:luckywheel/screen/competitions/competitions_binding.dart';
-import 'package:luckywheel/screen/competitions/competitions_page.dart';
-import 'package:luckywheel/screen/dashboard/dashboard_binding.dart';
-import 'package:luckywheel/screen/dashboard/dashboard_page.dart';
-import 'package:luckywheel/screen/football/football_binding.dart';
-import 'package:luckywheel/screen/football/football_page.dart';
 import 'package:luckywheel/screen/home/home_binding.dart';
-import 'package:luckywheel/screen/match_detail/match_detail_binding.dart';
-import 'package:luckywheel/screen/match_detail/match_detail_page.dart';
-import 'package:luckywheel/screen/newspaper/newspaper_binding.dart';
-import 'package:luckywheel/screen/newspaper/newspaper_page.dart';
+import 'package:luckywheel/screen/product/product_binding.dart';
+import 'package:luckywheel/screen/product/product_page.dart';
 import 'package:luckywheel/screen/team/team_binding.dart';
 import 'package:luckywheel/screen/team/team_page.dart';
 
@@ -32,6 +24,7 @@ class HomeRoutes {
   static const String VIDEOS = '/videos';
   static const String TEAM = '/team';
   static const String MATCH_DETAIL = '/match_detail';
+  static const String PRODUCT = '/product';
 
   static List<GetPage> list = [
     GetPage(
@@ -39,25 +32,7 @@ class HomeRoutes {
       page: () => const HomePage(),
       binding: HomeBinding(),
     ),
-    GetPage(
-      name: FOOTBALL,
-      page: () => const FootBallPage(),
-      binding: FootBallBinding(),
-      transition: Transition.rightToLeft,
-      transitionDuration: Duration(milliseconds: 500),
-    ),
-    GetPage(
-      name: COMPETITION,
-      page: () => const CompetitionPage(),
-      binding: CompetitionBinding(),
-      transition: Transition.rightToLeft,
-      transitionDuration: Duration(milliseconds: 500),
-    ),
-    GetPage(
-      name: DASHBOARD,
-      page: () => const DashBoardPage(),
-      binding: DashBoardBinding(),
-    ),
+  
     GetPage(
       name: TEAM,
       page: () => const TeamPage(),
@@ -65,19 +40,13 @@ class HomeRoutes {
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 500),
     ),
-    GetPage(
-      name: MATCH_DETAIL,
-      page: () => const MatchDetailpage(),
-      binding: MatchDetailBinding(),
-      transition: Transition.rightToLeft,
-      transitionDuration: Duration(milliseconds: 500),
-    ),
      GetPage(
-      name: NEWSPAPER,
-      page: () => const NewSpaperPage(),
-      binding: NewSpaperBinding(),
+      name: PRODUCT,
+      page: () => const ProductPage(),
+      binding: ProductBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 500),
     ),
+
   ];
 }
